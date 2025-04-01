@@ -2,6 +2,7 @@
 interface LoginResponse {
   success: boolean;
   token?: string;
+  access_token?: string;
   error?: string;
 }
 
@@ -26,7 +27,8 @@ export const loginUser = async (username: string, password: string): Promise<Log
     const data = await response.json();
     return { 
       success: true, 
-      token: data.token || "token-simulado" 
+      token: data.access_token || data.token,
+      access_token: data.access_token
     };
   } catch (error) {
     console.error("Erro na requisição:", error);

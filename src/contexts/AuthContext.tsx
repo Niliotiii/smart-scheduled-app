@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: any | null;
   selectedTeam: Team | null;
+  token: string | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   selectTeam: (team: Team) => void;
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
   selectedTeam: null,
+  token: null,
   login: async () => {},
   logout: () => {},
   selectTeam: () => {},
@@ -33,14 +35,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<any | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     // Verificar se há um token salvo no localStorage ao carregar a página
-    const token = localStorage.getItem("authToken");
+    const storedToken = localStorage.getItem("authToken");
     const userData = localStorage.getItem("userData");
     const teamData = localStorage.getItem("selectedTeam");
     
-    if (token && userData) {
+    if (storedToken && userData) {
+      setToken(storedToken);
       setUser(JSON.parse(userData));
       setIsAuthenticated(true);
     }
@@ -59,10 +63,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     // Aqui você pode decodificar o token JWT, se necessário
     const mockUser = { username, id: 1, role: "user" };
+    const actualToken = response.access_token || response.token;
     
-    localStorage.setItem("authToken", response.token || "");
+    if (!actualToken) {
+      throw new Error("Token não encontrado na resposta");
+    }
+    
+    localStorage.setItem("authToken", actualToken);
     localStorage.setItem("userData", JSON.stringify(mockUser));
     
+    setToken(actualToken);
     setUser(mockUser);
     setIsAuthenticated(true);
   };
@@ -71,6 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     localStorage.removeItem("selectedTeam");
+    setToken(null);
     setUser(null);
     setIsAuthenticated(false);
     setSelectedTeam(null);
@@ -92,6 +103,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isAuthenticated, 
         user, 
         selectedTeam,
+        token,
         login, 
         logout,
         selectTeam,
