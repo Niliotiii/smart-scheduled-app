@@ -38,6 +38,54 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/teams" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <Index />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/users" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <Index />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/invites" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <Index />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/assignments" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <Index />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/assign" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <Index />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/schedules" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <Index />
+                </ProtectedRoute>
+              } 
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
