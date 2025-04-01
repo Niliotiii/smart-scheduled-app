@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import TeamSelection from "./pages/TeamSelection";
+import Teams from "./pages/Teams";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +43,7 @@ const App = () => (
               path="/teams" 
               element={
                 <ProtectedRoute requireTeam={true}>
-                  <Index />
+                  <Teams />
                 </ProtectedRoute>
               } 
             />
