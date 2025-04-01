@@ -5,13 +5,19 @@ import React, { ReactNode } from "react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  requireTeam?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireTeam = false }) => {
   const { isAuthenticated } = useAuth();
+  const selectedTeam = localStorage.getItem("selectedTeam");
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (requireTeam && !selectedTeam) {
+    return <Navigate to="/team-selection" replace />;
   }
 
   return <>{children}</>;
