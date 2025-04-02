@@ -11,6 +11,9 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import TeamSelection from "./pages/TeamSelection";
 import Teams from "./pages/Teams";
+import CreateTeam from "./pages/CreateTeam";
+import EditTeam from "./pages/EditTeam";
+import TeamMembers from "./pages/TeamMembers";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +47,30 @@ const App = () => (
               element={
                 <ProtectedRoute requireTeam={true}>
                   <Teams />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teams/create" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <CreateTeam />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teams/:id/edit" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <EditTeam />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teams/:id/members" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <TeamMembers />
                 </ProtectedRoute>
               } 
             />

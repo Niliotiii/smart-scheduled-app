@@ -6,10 +6,10 @@ export interface Team {
 }
 
 export interface TeamMember {
-  id: number;
-  userId: number;
-  username: string;
-  role: string;
+  $id: string;
+  name: string;
+  email: string;
+  roleName: string;
 }
 
 export interface TeamResponse {
