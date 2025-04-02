@@ -26,6 +26,7 @@ import {
   User,
   CalendarClock,
   UserRoundPlus,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -62,10 +63,16 @@ export function AppSidebar() {
       isActive: isActive("/users"),
     },
     {
-      label: "Invite",
-      icon: UserPlus,
+      label: "Invites",
+      icon: Mail,
       path: "/invites",
       isActive: isActive("/invites"),
+    },
+    {
+      label: "My Invites",
+      icon: UserPlus,
+      path: "/user-invites",
+      isActive: isActive("/user-invites"),
     },
     {
       label: "Assignments",

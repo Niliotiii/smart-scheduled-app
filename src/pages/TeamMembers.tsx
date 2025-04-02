@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTeamById, fetchTeamMembers } from "@/services/teamService";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, UserPlus } from "lucide-react";
+import { Loader2, ArrowLeft, UserPlus, Mail } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import {
@@ -58,6 +58,10 @@ const TeamMembers = () => {
     navigate(`/teams/${teamId}/members/add`);
   };
 
+  const handleManageInvites = () => {
+    navigate(`/teams/${teamId}/invites`);
+  };
+
   if (isLoading) {
     return (
       <SidebarProvider defaultOpen={true}>
@@ -93,10 +97,16 @@ const TeamMembers = () => {
                   View all members of this team
                 </CardDescription>
               </div>
-              <Button className="flex gap-2 items-center" onClick={handleAddMember}>
-                <UserPlus className="h-4 w-4" />
-                Add Member
-              </Button>
+              <div className="flex gap-2">
+                <Button className="flex gap-2 items-center" onClick={handleManageInvites}>
+                  <Mail className="h-4 w-4" />
+                  Invites
+                </Button>
+                <Button className="flex gap-2 items-center" onClick={handleAddMember}>
+                  <UserPlus className="h-4 w-4" />
+                  Add Member
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {members.length === 0 ? (

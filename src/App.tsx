@@ -15,6 +15,9 @@ import CreateTeam from "./pages/CreateTeam";
 import EditTeam from "./pages/EditTeam";
 import TeamMembers from "./pages/TeamMembers";
 import TeamMemberAdd from "./pages/TeamMemberAdd";
+import TeamInvites from "./pages/TeamInvites";
+import Invites from "./pages/Invites";
+import UserInvites from "./pages/UserInvites";
 import Users from "./pages/Users";
 import UserView from "./pages/UserView";
 import UserEdit from "./pages/UserEdit";
@@ -88,6 +91,30 @@ const App = () => (
               } 
             />
             <Route 
+              path="/teams/:id/invites" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <TeamInvites />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/invites" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <Invites />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/user-invites" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <UserInvites />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
               path="/users" 
               element={
                 <ProtectedRoute requireTeam={true}>
@@ -116,14 +143,6 @@ const App = () => (
               element={
                 <ProtectedRoute requireTeam={true}>
                   <UserEdit />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/invites" 
-              element={
-                <ProtectedRoute requireTeam={true}>
-                  <Index />
                 </ProtectedRoute>
               } 
             />
