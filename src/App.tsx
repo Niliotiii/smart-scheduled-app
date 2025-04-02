@@ -14,6 +14,8 @@ import Teams from "./pages/Teams";
 import CreateTeam from "./pages/CreateTeam";
 import EditTeam from "./pages/EditTeam";
 import TeamMembers from "./pages/TeamMembers";
+import Users from "./pages/Users";
+import UserView from "./pages/UserView";
 
 const queryClient = new QueryClient();
 
@@ -78,7 +80,15 @@ const App = () => (
               path="/users" 
               element={
                 <ProtectedRoute requireTeam={true}>
-                  <Index />
+                  <Users />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/users/:id" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <UserView />
                 </ProtectedRoute>
               } 
             />

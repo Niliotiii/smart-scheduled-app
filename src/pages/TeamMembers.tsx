@@ -41,12 +41,14 @@ const TeamMembers = () => {
     queryKey: ['team-members', teamId],
     queryFn: () => fetchTeamMembers(teamId),
     enabled: !!teamId,
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to load team members",
-        variant: "destructive",
-      });
+    onSettled: (data, error) => {
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load team members",
+          variant: "destructive",
+        });
+      }
     },
   });
 
