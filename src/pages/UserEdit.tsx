@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -76,32 +75,34 @@ const UserEdit = () => {
     queryKey: ['user', userId],
     queryFn: () => fetchUserById(userId),
     enabled: !!userId,
-    onSuccess: (data) => {
-      // Set form values when user data is loaded
-      form.reset({
-        name: data.name || "",
-        email: data.email || "",
-        cpf: data.cpf || "",
-        cellphone: data.cellphone || "",
-        motherName: data.motherName || "",
-        fatherName: data.fatherName || "",
-        motherCellphone: data.motherCellphone || "",
-        fatherCellphone: data.fatherCellphone || "",
-        street: data.street || "",
-        city: data.city || "",
-        state: data.state || "",
-        postalCode: data.postalCode || "",
-        country: data.country || "",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to load user details",
-        variant: "destructive",
-      });
-      navigate("/users");
-    },
+    meta: {
+      onSuccess: (data) => {
+        // Set form values when user data is loaded
+        form.reset({
+          name: data.name || "",
+          email: data.email || "",
+          cpf: data.cpf || "",
+          cellphone: data.cellphone || "",
+          motherName: data.motherName || "",
+          fatherName: data.fatherName || "",
+          motherCellphone: data.motherCellphone || "",
+          fatherCellphone: data.fatherCellphone || "",
+          street: data.street || "",
+          city: data.city || "",
+          state: data.state || "",
+          postalCode: data.postalCode || "",
+          country: data.country || "",
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Error",
+          description: "Failed to load user details",
+          variant: "destructive",
+        });
+        navigate("/users");
+      }
+    }
   });
 
   const onSubmit = async (data: UserFormValues) => {

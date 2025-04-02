@@ -37,20 +37,21 @@ const TeamMembers = () => {
   });
 
   // Query to fetch team members
-  const { data: membersResponse, isLoading: isLoadingMembers } = useQuery({
+  const { data: members = [], isLoading: isLoadingMembers } = useQuery({
     queryKey: ['team-members', teamId],
     queryFn: () => fetchTeamMembers(teamId),
     enabled: !!teamId,
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to load team members",
-        variant: "destructive",
-      });
-    },
+    meta: {
+      onError: () => {
+        toast({
+          title: "Error",
+          description: "Failed to load team members",
+          variant: "destructive",
+        });
+      }
+    }
   });
 
-  const members = membersResponse || [];
   const isLoading = isLoadingTeam || isLoadingMembers;
 
   const handleAddMember = () => {

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -34,13 +33,15 @@ const UserView = () => {
     queryKey: ['user', userId],
     queryFn: () => fetchUserById(userId),
     enabled: !!userId,
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to load user details",
-        variant: "destructive",
-      });
-    },
+    meta: {
+      onError: () => {
+        toast({
+          title: "Error",
+          description: "Failed to load user details",
+          variant: "destructive",
+        });
+      }
+    }
   });
 
   // Query to fetch user teams

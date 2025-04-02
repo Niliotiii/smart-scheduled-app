@@ -1,4 +1,6 @@
+
 import { User, UserUpdateRequest, UserCreateRequest, UserResponse, TeamResponse, PermissionResponse, ScheduleResponse } from "@/types/user";
+import { Team } from "@/types/team";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5199/api";
 
@@ -165,4 +167,108 @@ export const addTeamMember = async (teamId: number, userId: number, role: string
 
   const data = await response.json();
   return data.data;
+};
+
+// Get all teams
+export const fetchTeams = async (): Promise<Team[]> => {
+  const response = await fetch(`${API_URL}/Team`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch teams");
+  }
+
+  const data = await response.json();
+  return data.data.$values || [];
+};
+
+// Get team by id
+export const fetchTeamById = async (id: number): Promise<Team> => {
+  const response = await fetch(`${API_URL}/Team/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch team");
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
+// Get team members
+export const fetchTeamMembers = async (id: number): Promise<any[]> => {
+  const response = await fetch(`${API_URL}/Team/${id}/members`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch team members");
+  }
+
+  const data = await response.json();
+  return data.data.$values || [];
+};
+
+// Create new team
+export const createTeam = async (team: { name: string; description: string }): Promise<Team> => {
+  const response = await fetch(`${API_URL}/Team`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify(team),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create team");
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
+// Update team
+export const updateTeam = async (id: number, team: { name: string; description: string }): Promise<Team> => {
+  const response = await fetch(`${API_URL}/Team/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify(team),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update team");
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
+// Delete team
+export const deleteTeam = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_URL}/Team/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete team");
+  }
 };
