@@ -41,19 +41,21 @@ const TeamMembers = () => {
     queryKey: ['team-members', teamId],
     queryFn: () => fetchTeamMembers(teamId),
     enabled: !!teamId,
-    onSettled: (data, error) => {
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to load team members",
-          variant: "destructive",
-        });
-      }
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to load team members",
+        variant: "destructive",
+      });
     },
   });
 
   const members = membersResponse || [];
   const isLoading = isLoadingTeam || isLoadingMembers;
+
+  const handleAddMember = () => {
+    navigate(`/teams/${teamId}/members/add`);
+  };
 
   if (isLoading) {
     return (
@@ -90,7 +92,7 @@ const TeamMembers = () => {
                   View all members of this team
                 </CardDescription>
               </div>
-              <Button className="flex gap-2 items-center">
+              <Button className="flex gap-2 items-center" onClick={handleAddMember}>
                 <UserPlus className="h-4 w-4" />
                 Add Member
               </Button>

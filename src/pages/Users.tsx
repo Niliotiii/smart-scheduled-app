@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUsers, deleteUser } from "@/services/userService";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Plus, Eye, Edit, Trash2, UserRoundCheck } from "lucide-react";
+import { Loader2, Plus, Eye, Edit, Trash2 } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import {

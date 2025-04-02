@@ -14,8 +14,11 @@ import Teams from "./pages/Teams";
 import CreateTeam from "./pages/CreateTeam";
 import EditTeam from "./pages/EditTeam";
 import TeamMembers from "./pages/TeamMembers";
+import TeamMemberAdd from "./pages/TeamMemberAdd";
 import Users from "./pages/Users";
 import UserView from "./pages/UserView";
+import UserEdit from "./pages/UserEdit";
+import UserCreate from "./pages/UserCreate";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +80,14 @@ const App = () => (
               } 
             />
             <Route 
+              path="/teams/:id/members/add" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <TeamMemberAdd />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
               path="/users" 
               element={
                 <ProtectedRoute requireTeam={true}>
@@ -85,10 +96,26 @@ const App = () => (
               } 
             />
             <Route 
+              path="/users/create" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <UserCreate />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
               path="/users/:id" 
               element={
                 <ProtectedRoute requireTeam={true}>
                   <UserView />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/users/:id/edit" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <UserEdit />
                 </ProtectedRoute>
               } 
             />
@@ -124,7 +151,6 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

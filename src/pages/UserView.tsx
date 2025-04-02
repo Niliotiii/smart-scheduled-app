@@ -34,14 +34,12 @@ const UserView = () => {
     queryKey: ['user', userId],
     queryFn: () => fetchUserById(userId),
     enabled: !!userId,
-    onSettled: (data, error) => {
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to load user details",
-          variant: "destructive",
-        });
-      }
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to load user details",
+        variant: "destructive",
+      });
     },
   });
 

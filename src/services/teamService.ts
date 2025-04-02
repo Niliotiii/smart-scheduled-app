@@ -1,298 +1,168 @@
+import { User, UserUpdateRequest, UserCreateRequest, UserResponse, TeamResponse, PermissionResponse, ScheduleResponse } from "@/types/user";
 
-import { TeamResponse, Team } from "@/types/team";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5199/api";
 
-// Function to fetch all teams
-export const fetchTeams = async (): Promise<Team[]> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
+// Helper to get auth token
+const getAuthToken = () => {
+  return localStorage.getItem("authToken");
+};
 
-    const response = await fetch("http://localhost:5199/api/Team", {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+// Get all users
+export const fetchUsers = async (): Promise<User[]> => {
+  const response = await fetch(`${API_URL}/User`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch teams");
-    }
+  if (!response.ok) {
+    throw new Error("Failed to fetch users");
+  }
 
-    const data: TeamResponse = await response.json();
-    return data.data.$values || [];
-  } catch (error) {
-    console.error("Error fetching teams:", error);
-    throw error;
+  const data: UserResponse = await response.json();
+  return data.data.$values;
+};
+
+// Get user by id
+export const fetchUserById = async (id: number): Promise<User> => {
+  const response = await fetch(`${API_URL}/User/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch user");
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
+// Create new user
+export const createUser = async (user: UserCreateRequest): Promise<User> => {
+  const response = await fetch(`${API_URL}/User`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify(user),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create user");
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
+// Update user
+export const updateUser = async (id: number, user: UserUpdateRequest): Promise<User> => {
+  const response = await fetch(`${API_URL}/User/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify(user),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update user");
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
+// Delete user
+export const deleteUser = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_URL}/User/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete user");
   }
 };
 
-// Function to fetch a specific team by ID
-export const fetchTeamById = async (id: number): Promise<Team> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
+// Get user teams
+export const fetchUserTeams = async (id: number): Promise<TeamResponse> => {
+  const response = await fetch(`${API_URL}/User/${id}/teams`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
 
-    const response = await fetch(`http://localhost:5199/api/Team/${id}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch team");
-    }
-
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.error(`Error fetching team with ID ${id}:`, error);
-    throw error;
+  if (!response.ok) {
+    throw new Error("Failed to fetch user teams");
   }
+
+  const data = await response.json();
+  return data;
 };
 
-// Function to create a new team
-export const createTeam = async (team: Omit<Team, "id">): Promise<Team> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
+// Get user permissions
+export const fetchUserPermissions = async (id: number): Promise<PermissionResponse> => {
+  const response = await fetch(`${API_URL}/User/${id}/permissions`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
 
-    const response = await fetch("http://localhost:5199/api/Team", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(team),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to create team");
-    }
-
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.error("Error creating team:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error("Failed to fetch user permissions");
   }
+
+  const data = await response.json();
+  return data;
 };
 
-// Function to update a team
-export const updateTeam = async (id: number, team: Partial<Team>): Promise<Team> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
+// Get user schedules
+export const fetchUserSchedules = async (id: number): Promise<ScheduleResponse> => {
+  const response = await fetch(`${API_URL}/User/${id}/schedules`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+  });
 
-    const response = await fetch(`http://localhost:5199/api/Team/${id}`, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(team),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to update team");
-    }
-
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.error(`Error updating team with ID ${id}:`, error);
-    throw error;
+  if (!response.ok) {
+    throw new Error("Failed to fetch user schedules");
   }
+
+  const data = await response.json();
+  return data;
 };
 
-// Function to delete a team
-export const deleteTeam = async (id: number): Promise<void> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
+// Add a team member
+export const addTeamMember = async (teamId: number, userId: number, role: string): Promise<any> => {
+  const response = await fetch(`${API_URL}/Team/${teamId}/members`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify({
+      userId,
+      role
+    }),
+  });
 
-    const response = await fetch(`http://localhost:5199/api/Team/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to delete team");
-    }
-  } catch (error) {
-    console.error(`Error deleting team with ID ${id}:`, error);
-    throw error;
+  if (!response.ok) {
+    throw new Error("Failed to add team member");
   }
-};
 
-// Function to fetch team members
-export const fetchTeamMembers = async (teamId: number): Promise<any[]> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
-    const response = await fetch(`http://localhost:5199/api/Team/${teamId}/members`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch team members");
-    }
-
-    const data = await response.json();
-    return data.data.$values || [];
-  } catch (error) {
-    console.error(`Error fetching members for team with ID ${teamId}:`, error);
-    throw error;
-  }
-};
-
-// Function to add a member to a team
-export const addTeamMember = async (teamId: number, userData: any): Promise<any> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
-    const response = await fetch(`http://localhost:5199/api/Team/${teamId}/members`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to add team member");
-    }
-
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.error(`Error adding member to team with ID ${teamId}:`, error);
-    throw error;
-  }
-};
-
-// Function to remove a member from a team
-export const removeTeamMember = async (teamId: number, userId: number): Promise<void> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
-    const response = await fetch(`http://localhost:5199/api/Team/${teamId}/members/${userId}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to remove team member");
-    }
-  } catch (error) {
-    console.error(`Error removing user ${userId} from team ${teamId}:`, error);
-    throw error;
-  }
-};
-
-// Function to update a member's role in a team
-export const updateMemberRole = async (teamId: number, userId: number, role: string): Promise<any> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
-    const response = await fetch(`http://localhost:5199/api/Team/${teamId}/members/${userId}/role`, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ role }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to update member role");
-    }
-
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.error(`Error updating role for user ${userId} in team ${teamId}:`, error);
-    throw error;
-  }
-};
-
-// Function to fetch user's teams
-export const fetchMyTeams = async (): Promise<Team[]> => {
-  try {
-    const token = localStorage.getItem("authToken");
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
-    const response = await fetch("http://localhost:5199/api/Team/my-teams", {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch my teams");
-    }
-
-    const data = await response.json();
-    return data.data.$values || [];
-  } catch (error) {
-    console.error("Error fetching my teams:", error);
-    throw error;
-  }
+  const data = await response.json();
+  return data.data;
 };
