@@ -22,6 +22,11 @@ import Users from "./pages/Users";
 import UserView from "./pages/UserView";
 import UserEdit from "./pages/UserEdit";
 import UserCreate from "./pages/UserCreate";
+import Assignments from "./pages/Assignments";
+import AssignmentView from "./pages/AssignmentView";
+import AssignmentCreate from "./pages/AssignmentCreate";
+import AssignmentEdit from "./pages/AssignmentEdit";
+import Assign from "./pages/Assign";
 
 const queryClient = new QueryClient();
 
@@ -150,7 +155,31 @@ const App = () => (
               path="/assignments" 
               element={
                 <ProtectedRoute requireTeam={true}>
-                  <Index />
+                  <Assignments />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/assignments/create" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <AssignmentCreate />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/assignments/:id" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <AssignmentView />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/assignments/:id/edit" 
+              element={
+                <ProtectedRoute requireTeam={true}>
+                  <AssignmentEdit />
                 </ProtectedRoute>
               } 
             />
@@ -158,7 +187,7 @@ const App = () => (
               path="/assign" 
               element={
                 <ProtectedRoute requireTeam={true}>
-                  <Index />
+                  <Assign />
                 </ProtectedRoute>
               } 
             />

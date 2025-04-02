@@ -27,6 +27,8 @@ import {
   CalendarClock,
   UserRoundPlus,
   Mail,
+  ClipboardList,
+  ClipboardPen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -46,7 +48,7 @@ export function AppSidebar() {
   };
 
   const isActive = (path: string) => {
-    return location.pathname === path;
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
   const menuItems = [
@@ -76,13 +78,13 @@ export function AppSidebar() {
     },
     {
       label: "Assignments",
-      icon: Briefcase,
+      icon: ClipboardList,
       path: "/assignments",
       isActive: isActive("/assignments"),
     },
     {
       label: "Assign",
-      icon: UserRoundPlus,
+      icon: ClipboardPen,
       path: "/assign",
       isActive: isActive("/assign"),
     },
