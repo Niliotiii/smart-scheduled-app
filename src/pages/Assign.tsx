@@ -1,10 +1,12 @@
 
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppSidebar } from "@/components/AppSidebar";
 import { fetchTeamMembers } from "@/services/teamService";
 import { fetchAssignments } from "@/services/assignmentService";
+import { fetchSchedules } from "@/services/scheduleService";
+import { createAssigned } from "@/services/assignedService";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -22,12 +24,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
 
 const Assign = () => {
   const { selectedTeam } = useAuth();
   const teamId = selectedTeam?.id;
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [selectedAssignment, setSelectedAssignment] = useState<string>("");
+  const [selectedSchedule, setSelectedSchedule] = useState<string>("");
 
   const { data: members, isLoading: isLoadingMembers } = useQuery({
     queryKey: ["teamMembers", teamId],
@@ -41,20 +45,39 @@ const Assign = () => {
     enabled: !!teamId,
   });
 
+  const { data: schedules, isLoading: isLoadingSchedules } = useQuery({
+    queryKey: ["schedules", teamId],
+    queryFn: () => (teamId ? fetchSchedules(teamId) : Promise.resolve([])),
+    enabled: !!teamId,
+  });
+
+  const assignMutation = useMutation({
+    mutationFn: createAssigned,
+    onSuccess: () => {
+      toast.success("Task assigned successfully!");
+      setSelectedUser("");
+      setSelectedAssignment("");
+      setSelectedSchedule("");
+    },
+    onError: (error) => {
+      toast.error(`Failed to assign task: ${error instanceof Error ? error.message : "Unknown error"}`);
+    },
+  });
+
   const handleAssign = () => {
-    if (!selectedUser || !selectedAssignment) {
-      toast.error("Please select both a user and an assignment");
+    if (!selectedUser || !selectedAssignment || !selectedSchedule) {
+      toast.error("Please select a user, assignment, and schedule");
       return;
     }
 
-    // Normally we would call an API endpoint to assign the user to the assignment
-    // For now, we'll just show a success toast
-    toast.success(`User assigned to assignment successfully!`);
-    setSelectedUser("");
-    setSelectedAssignment("");
+    assignMutation.mutate({
+      memberId: parseInt(selectedUser),
+      assignmentId: parseInt(selectedAssignment),
+      scheduledId: parseInt(selectedSchedule),
+    });
   };
 
-  const isLoading = isLoadingMembers || isLoadingAssignments;
+  const isLoading = isLoadingMembers || isLoadingAssignments || isLoadingSchedules || assignMutation.isPending;
 
   if (!teamId) {
     return <div className="p-8">No team selected. Please select a team first.</div>;
@@ -69,7 +92,7 @@ const Assign = () => {
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle>Create New Assignment</CardTitle>
-            <CardDescription>Assign team members to specific tasks</CardDescription>
+            <CardDescription>Assign team members to specific tasks and schedules</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
@@ -85,7 +108,7 @@ const Assign = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {members?.map((member: any) => (
-                      <SelectItem key={member.email} value={member.email}>
+                      <SelectItem key={member.id || member.email} value={member.id?.toString() || ""}>
                         {member.name} ({member.email})
                       </SelectItem>
                     ))}
@@ -113,11 +136,32 @@ const Assign = () => {
                 </Select>
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="schedule">Select Schedule</Label>
+                <Select
+                  value={selectedSchedule}
+                  onValueChange={setSelectedSchedule}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger id="schedule">
+                    <SelectValue placeholder="Select a schedule" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {schedules?.map((schedule) => (
+                      <SelectItem key={schedule.id} value={schedule.id.toString()}>
+                        {schedule.title} ({new Date(schedule.startDate).toLocaleDateString()} - {new Date(schedule.endDate).toLocaleDateString()})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <Button 
                 className="w-full" 
                 onClick={handleAssign}
-                disabled={!selectedUser || !selectedAssignment}
+                disabled={!selectedUser || !selectedAssignment || !selectedSchedule || isLoading}
               >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Assign Member to Task
               </Button>
             </div>
