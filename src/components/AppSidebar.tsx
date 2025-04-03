@@ -22,7 +22,6 @@ import {
   Briefcase,
   Calendar,
   LogOut,
-  User,
   CalendarClock,
   ClipboardList,
   Settings,
@@ -74,12 +73,6 @@ export function AppSidebar() {
       path: "/admin",
       isActive: isActive("/admin"),
       show: isAdmin,
-    },
-    {
-      label: "Profile",
-      icon: User,
-      path: "/profile",
-      isActive: isActive("/profile"),
     }
   ];
 
@@ -120,6 +113,16 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="border-t border-border p-4">
         <div className="space-y-2">
+          {isAdmin && (
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => navigate('/admin')}
+            >
+              <Settings className="h-4 w-4" />
+              Admin Panel
+            </Button>
+          )}
           <Button
             variant="outline"
             className="w-full justify-start gap-2"
