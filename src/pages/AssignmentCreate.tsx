@@ -1,149 +1,136 @@
 
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { createAssignment } from "@/services/assignmentService";
-import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { AppSidebar } from "@/components/AppSidebar";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-
-const formSchema = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters" }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters" }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useAuth } from "@/contexts/AuthContext";
+import { AssignmentCreateRequest } from "@/types/assignment";
 
 const AssignmentCreate = () => {
-  const { selectedTeam } = useAuth();
   const navigate = useNavigate();
-  const teamId = selectedTeam?.id;
+  const { selectedTeam } = useAuth();
+  const teamId = selectedTeam?.id || 0;
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-    },
-  });
-
+  // Mutation to create a new assignment
   const createAssignmentMutation = useMutation({
-    mutationFn: (values: FormValues) => {
-      if (!teamId) {
-        throw new Error("No team selected");
-      }
-      return createAssignment(teamId, values);
+    mutationFn: (data: AssignmentCreateRequest) => createAssignment(teamId, data),
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: "Assignment created successfully",
+      });
+      navigate(`/assignments/${data.id}`);
     },
-    onSuccess: () => {
-      toast.success("Assignment created successfully");
-      navigate("/assignments");
-    },
-    onError: (error: Error) => {
-      toast.error(`Error creating assignment: ${error.message}`);
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Failed to create assignment: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     },
   });
 
-  const onSubmit = (values: FormValues) => {
-    createAssignmentMutation.mutate(values);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Ensure title is not empty as it's required
+    if (!title.trim()) {
+      toast({
+        title: "Error",
+        description: "Title is required",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const assignmentData: AssignmentCreateRequest = {
+      title: title,
+      description: description
+    };
+    
+    createAssignmentMutation.mutate(assignmentData);
   };
 
-  if (!teamId) {
-    return <div className="p-8">No team selected. Please select a team first.</div>;
-  }
-
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen w-full">
       <AppSidebar />
-      <div className="flex-1 p-8">
-        <div className="flex items-center gap-2 mb-6">
-          <Button variant="outline" size="sm" onClick={() => navigate("/assignments")}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold">Create Assignment</h1>
-        </div>
-
-        <Card className="max-w-2xl mx-auto">
+      <main className="flex-1 p-6">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate("/assignments")} 
+          className="mb-4 flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Assignments
+        </Button>
+        
+        <Card>
           <CardHeader>
-            <CardTitle>New Assignment</CardTitle>
-            <CardDescription>Create a new assignment for your team</CardDescription>
+            <CardTitle>Create New Assignment</CardTitle>
+            <CardDescription>
+              Add a new assignment to your team
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Assignment title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="title" className="text-sm font-medium">Title</label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter assignment title"
+                  required
                 />
-                
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Describe the assignment in detail" 
-                          className="min-h-[150px]"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium">Description</label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter assignment description"
+                  rows={5}
                 />
-                
-                <div className="flex justify-end gap-3">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => navigate("/assignments")}
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={createAssignmentMutation.isPending}
-                  >
-                    {createAssignmentMutation.isPending ? "Creating..." : "Create Assignment"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </CardContent>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end space-x-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => navigate("/assignments")}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={createAssignmentMutation.isPending}
+              >
+                {createAssignmentMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Create Assignment
+              </Button>
+            </CardFooter>
+          </form>
         </Card>
-      </div>
+      </main>
     </div>
   );
 };

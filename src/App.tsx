@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -30,6 +31,15 @@ import Assign from "./pages/Assign";
 
 const queryClient = new QueryClient();
 
+// Wrap the content in SidebarProvider for protected routes
+const ProtectedContent = ({ children, requireTeam = false }) => (
+  <ProtectedRoute requireTeam={requireTeam}>
+    <SidebarProvider defaultOpen={true}>
+      {children}
+    </SidebarProvider>
+  </ProtectedRoute>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -50,153 +60,153 @@ const App = () => (
             <Route 
               path="/" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <Index />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/teams" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <Teams />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/teams/create" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <CreateTeam />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/teams/:id/edit" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <EditTeam />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/teams/:id/members" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <TeamMembers />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/teams/:id/members/add" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <TeamMemberAdd />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/teams/:id/invites" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <TeamInvites />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/invites" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <Invites />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/user-invites" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <UserInvites />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/users" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <Users />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/users/create" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <UserCreate />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/users/:id" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <UserView />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/users/:id/edit" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <UserEdit />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/assignments" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <Assignments />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/assignments/create" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <AssignmentCreate />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/assignments/:id" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <AssignmentView />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/assignments/:id/edit" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <AssignmentEdit />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/assign" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <Assign />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route 
               path="/schedules" 
               element={
-                <ProtectedRoute requireTeam={true}>
+                <ProtectedContent requireTeam={true}>
                   <Index />
-                </ProtectedRoute>
+                </ProtectedContent>
               } 
             />
             <Route path="*" element={<NotFound />} />

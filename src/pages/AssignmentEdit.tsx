@@ -1,174 +1,163 @@
 
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { fetchAssignmentById, updateAssignment } from "@/services/assignmentService";
-import { AppSidebar } from "@/components/AppSidebar";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchAssignment, updateAssignment } from "@/services/assignmentService";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { AppSidebar } from "@/components/AppSidebar";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-
-const formSchema = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters" }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters" }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useAuth } from "@/contexts/AuthContext";
+import { AssignmentUpdateRequest } from "@/types/assignment";
 
 const AssignmentEdit = () => {
-  const { id } = useParams<{ id: string }>();
-  const { selectedTeam } = useAuth();
   const navigate = useNavigate();
-  const teamId = selectedTeam?.id;
-  const assignmentId = id ? parseInt(id) : undefined;
+  const { id } = useParams();
+  const assignmentId = id ? parseInt(id) : 0;
+  const { selectedTeam } = useAuth();
+  const teamId = selectedTeam?.id || 0;
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-    },
-  });
-
-  const { isLoading, error } = useQuery({
-    queryKey: ["assignment", teamId, assignmentId],
-    queryFn: () => teamId && assignmentId 
-      ? fetchAssignmentById(teamId, assignmentId) 
-      : Promise.reject("Invalid assignment ID or team ID"),
+  // Query to fetch assignment details
+  const { data: assignment, isLoading } = useQuery({
+    queryKey: ['assignment', teamId, assignmentId],
+    queryFn: () => fetchAssignment(teamId, assignmentId),
     enabled: !!teamId && !!assignmentId,
-    meta: {
-      onSuccess: (data) => {
-        form.reset({
-          title: data.title,
-          description: data.description,
-        });
-      },
-    },
   });
 
+  useEffect(() => {
+    if (assignment) {
+      setTitle(assignment.title || "");
+      setDescription(assignment.description || "");
+    }
+  }, [assignment]);
+
+  // Mutation to update assignment
   const updateAssignmentMutation = useMutation({
-    mutationFn: (values: FormValues) => {
-      if (!teamId || !assignmentId) {
-        throw new Error("No team or assignment selected");
-      }
-      return updateAssignment(teamId, assignmentId, values);
-    },
+    mutationFn: (data: AssignmentUpdateRequest) => updateAssignment(teamId, assignmentId, data),
     onSuccess: () => {
-      toast.success("Assignment updated successfully");
+      toast({
+        title: "Success",
+        description: "Assignment updated successfully",
+      });
       navigate(`/assignments/${assignmentId}`);
     },
-    onError: (error: Error) => {
-      toast.error(`Error updating assignment: ${error.message}`);
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Failed to update assignment: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     },
   });
 
-  const onSubmit = (values: FormValues) => {
-    updateAssignmentMutation.mutate(values);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Ensure title is not empty as it's required
+    if (!title.trim()) {
+      toast({
+        title: "Error",
+        description: "Title is required",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const assignmentData: AssignmentUpdateRequest = {
+      title: title,
+      description: description
+    };
+    
+    updateAssignmentMutation.mutate(assignmentData);
   };
 
-  if (!teamId) {
-    return <div className="p-8">No team selected. Please select a team first.</div>;
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <main className="flex-1 p-6 flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        </main>
+      </div>
+    );
   }
 
-  if (isLoading) return <div className="p-8">Loading assignment data...</div>;
-  if (error) return <div className="p-8">Error loading assignment: {(error as Error).message}</div>;
-
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen w-full">
       <AppSidebar />
-      <div className="flex-1 p-8">
-        <div className="flex items-center gap-2 mb-6">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => navigate(`/assignments/${assignmentId}`)}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold">Edit Assignment</h1>
-        </div>
-
-        <Card className="max-w-2xl mx-auto">
+      <main className="flex-1 p-6">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate(`/assignments/${assignmentId}`)} 
+          className="mb-4 flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Assignment
+        </Button>
+        
+        <Card>
           <CardHeader>
-            <CardTitle>Update Assignment</CardTitle>
-            <CardDescription>Update the details of your assignment</CardDescription>
+            <CardTitle>Edit Assignment</CardTitle>
+            <CardDescription>
+              Update the assignment details
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Assignment title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="title" className="text-sm font-medium">Title</label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter assignment title"
+                  required
                 />
-                
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Describe the assignment in detail" 
-                          className="min-h-[150px]"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium">Description</label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter assignment description"
+                  rows={5}
                 />
-                
-                <div className="flex justify-end gap-3">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => navigate(`/assignments/${assignmentId}`)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={updateAssignmentMutation.isPending}
-                  >
-                    {updateAssignmentMutation.isPending ? "Updating..." : "Update Assignment"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </CardContent>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end space-x-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => navigate(`/assignments/${assignmentId}`)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={updateAssignmentMutation.isPending}
+              >
+                {updateAssignmentMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Update Assignment
+              </Button>
+            </CardFooter>
+          </form>
         </Card>
-      </div>
+      </main>
     </div>
   );
 };
