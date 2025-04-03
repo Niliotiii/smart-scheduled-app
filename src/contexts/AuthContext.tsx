@@ -8,6 +8,7 @@ interface AuthContextType {
   user: any | null;
   selectedTeam: Team | null;
   token: string | null;
+  userTeamRule?: number;  // Added userTeamRule property
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   selectTeam: (team: Team) => void;
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   selectedTeam: null,
   token: null,
+  userTeamRule: undefined, // Default value for userTeamRule
   login: async () => {},
   logout: () => {},
   selectTeam: () => {},
@@ -36,12 +38,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [userTeamRule, setUserTeamRule] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     // Verificar se há um token salvo no localStorage ao carregar a página
     const storedToken = localStorage.getItem("authToken");
     const userData = localStorage.getItem("userData");
     const teamData = localStorage.getItem("selectedTeam");
+    const ruleData = localStorage.getItem("userTeamRule");
     
     if (storedToken && userData) {
       setToken(storedToken);
@@ -51,6 +55,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     if (teamData) {
       setSelectedTeam(JSON.parse(teamData));
+    }
+
+    if (ruleData) {
+      setUserTeamRule(Number(ruleData));
     }
   }, []);
 
@@ -81,20 +89,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     localStorage.removeItem("selectedTeam");
+    localStorage.removeItem("userTeamRule");
     setToken(null);
     setUser(null);
     setIsAuthenticated(false);
     setSelectedTeam(null);
+    setUserTeamRule(undefined);
   };
 
   const selectTeam = (team: Team) => {
     localStorage.setItem("selectedTeam", JSON.stringify(team));
     setSelectedTeam(team);
+    
+    // For demo purposes, set a default userTeamRule when selecting a team
+    // In a real app, this would come from API call based on user's role in the team
+    const mockUserTeamRule = team.id % 4; // Just a simple way to create different roles for testing
+    localStorage.setItem("userTeamRule", mockUserTeamRule.toString());
+    setUserTeamRule(mockUserTeamRule);
   };
 
   const clearTeamSelection = () => {
     localStorage.removeItem("selectedTeam");
+    localStorage.removeItem("userTeamRule");
     setSelectedTeam(null);
+    setUserTeamRule(undefined);
   };
 
   return (
@@ -104,6 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         user, 
         selectedTeam,
         token,
+        userTeamRule,
         login, 
         logout,
         selectTeam,
