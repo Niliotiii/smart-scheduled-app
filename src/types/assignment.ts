@@ -4,6 +4,7 @@ export interface Assignment {
   teamId: number;
   title: string;
   description: string;
+  status?: number;
   createdAt: string;
   updatedAt: string;
 }

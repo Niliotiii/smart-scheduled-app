@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -38,7 +39,7 @@ const Assignments = () => {
     return <div>Please select a team.</div>;
   }
 
-  const getStatusBadge = (status: number) => {
+  const getStatusBadge = (status: number | undefined) => {
     switch (status) {
       case 0:
         return <Badge variant="outline">Draft</Badge>;
@@ -147,7 +148,7 @@ const Assignments = () => {
                     <TableRow key={assignment.id}>
                       <TableCell className="font-medium">{assignment.title}</TableCell>
                       <TableCell>{assignment.description}</TableCell>
-                      <TableCell>{getStatusBadge(assignment.status || 0)}</TableCell>
+                      <TableCell>{getStatusBadge(assignment.status)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end space-x-2">
                           <Button
