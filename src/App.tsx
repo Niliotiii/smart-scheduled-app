@@ -17,7 +17,6 @@ import EditTeam from "./pages/EditTeam";
 import TeamMembers from "./pages/TeamMembers";
 import TeamMemberAdd from "./pages/TeamMemberAdd";
 import TeamInvites from "./pages/TeamInvites";
-import Invites from "./pages/Invites";
 import UserInvites from "./pages/UserInvites";
 import Users from "./pages/Users";
 import UserView from "./pages/UserView";
@@ -27,11 +26,12 @@ import Assignments from "./pages/Assignments";
 import AssignmentView from "./pages/AssignmentView";
 import AssignmentCreate from "./pages/AssignmentCreate";
 import AssignmentEdit from "./pages/AssignmentEdit";
-import Assign from "./pages/Assign";
 import Schedules from "./pages/Schedules";
 import ScheduleCreate from "./pages/ScheduleCreate";
 import ScheduleEdit from "./pages/ScheduleEdit";
 import ScheduleView from "./pages/ScheduleView";
+import Admin from "./pages/Admin";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -118,18 +118,26 @@ const App = () => (
               } 
             />
             <Route 
-              path="/invites" 
-              element={
-                <ProtectedContent requireTeam={true}>
-                  <Invites />
-                </ProtectedContent>
-              } 
-            />
-            <Route 
               path="/user-invites" 
               element={
                 <ProtectedContent requireTeam={true}>
                   <UserInvites />
+                </ProtectedContent>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedContent requireTeam={true}>
+                  <UserProfile />
+                </ProtectedContent>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedContent requireTeam={true}>
+                  <Admin />
                 </ProtectedContent>
               } 
             />
@@ -194,14 +202,6 @@ const App = () => (
               element={
                 <ProtectedContent requireTeam={true}>
                   <AssignmentEdit />
-                </ProtectedContent>
-              } 
-            />
-            <Route 
-              path="/assign" 
-              element={
-                <ProtectedContent requireTeam={true}>
-                  <Assign />
                 </ProtectedContent>
               } 
             />

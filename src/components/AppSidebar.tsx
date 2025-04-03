@@ -24,17 +24,16 @@ import {
   LogOut,
   User,
   CalendarClock,
-  UserRoundPlus,
-  Mail,
   ClipboardList,
-  ClipboardPen,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
-  const { selectedTeam, logout, clearTeamSelection } = useAuth();
+  const { selectedTeam, logout, clearTeamSelection, userTeamRule } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const isAdmin = userTeamRule === 3; // 3 = Admin
 
   const handleLogout = () => {
     logout();
@@ -52,28 +51,10 @@ export function AppSidebar() {
 
   const menuItems = [
     {
-      label: "Team",
-      icon: Users,
-      path: "/teams",
-      isActive: isActive("/teams"),
-    },
-    {
-      label: "Users",
-      icon: User,
-      path: "/users",
-      isActive: isActive("/users"),
-    },
-    {
-      label: "Invites",
-      icon: Mail,
-      path: "/invites",
-      isActive: isActive("/invites"),
-    },
-    {
-      label: "My Invites",
-      icon: UserPlus,
-      path: "/user-invites",
-      isActive: isActive("/user-invites"),
+      label: "Dashboard",
+      icon: Briefcase,
+      path: "/",
+      isActive: location.pathname === "/",
     },
     {
       label: "Assignments",
@@ -82,17 +63,24 @@ export function AppSidebar() {
       isActive: isActive("/assignments"),
     },
     {
-      label: "Assign",
-      icon: ClipboardPen,
-      path: "/assign",
-      isActive: isActive("/assign"),
-    },
-    {
       label: "Schedule",
       icon: Calendar,
       path: "/schedules",
       isActive: isActive("/schedules"),
     },
+    {
+      label: "Admin",
+      icon: Settings,
+      path: "/admin",
+      isActive: isActive("/admin"),
+      show: isAdmin,
+    },
+    {
+      label: "Profile",
+      icon: User,
+      path: "/profile",
+      isActive: isActive("/profile"),
+    }
   ];
 
   return (
@@ -112,7 +100,9 @@ export function AppSidebar() {
           <SidebarGroupLabel>{selectedTeam?.name || "Dashboard"}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
+              {menuItems
+                .filter(item => item.show !== false)
+                .map((item) => (
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton
                     isActive={item.isActive}

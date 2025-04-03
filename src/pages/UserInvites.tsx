@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2, Check, X } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import MainNavbar from "@/components/MainNavbar";
 import {
   Card,
   CardContent,
@@ -40,7 +41,11 @@ const getTeamRuleName = (ruleId: number): string => {
   }
 };
 
-const UserInvites = () => {
+interface UserInvitesProps {
+  isEmbedded?: boolean;
+}
+
+const UserInvites: React.FC<UserInvitesProps> = ({ isEmbedded = false }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const userId = user?.id || 0;
@@ -109,83 +114,96 @@ const UserInvites = () => {
 
   const isActionLoading = acceptMutation.isPending || rejectMutation.isPending;
 
+  const content = (
+    <>
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        </div>
+      ) : invites.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          You have no pending invites.
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Team</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {invites.map((invite) => (
+              <TableRow key={invite.id}>
+                <TableCell>{invite.teamName}</TableCell>
+                <TableCell>{getTeamRuleName(invite.teamRule)}</TableCell>
+                <TableCell>{new Date(invite.createdAt).toLocaleString()}</TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleAccept(invite.id)}
+                      disabled={isActionLoading}
+                      className="bg-green-50 hover:bg-green-100"
+                    >
+                      {acceptMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Check className="h-4 w-4 text-green-500" />
+                      )}
+                      <span className="ml-1">Accept</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleReject(invite.id)}
+                      disabled={isActionLoading}
+                      className="bg-red-50 hover:bg-red-100"
+                    >
+                      {rejectMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <X className="h-4 w-4 text-red-500" />
+                      )}
+                      <span className="ml-1">Reject</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </>
+  );
+
+  if (isEmbedded) {
+    return content;
+  }
+
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full flex-col">
         <AppSidebar />
-        <main className="flex-1 p-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>My Invites</CardTitle>
-              <CardDescription>
-                View and manage your team invitations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-                </div>
-              ) : invites.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  You have no pending invites.
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Team</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {invites.map((invite) => (
-                      <TableRow key={invite.id}>
-                        <TableCell>{invite.teamName}</TableCell>
-                        <TableCell>{getTeamRuleName(invite.teamRule)}</TableCell>
-                        <TableCell>{new Date(invite.createdAt).toLocaleString()}</TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleAccept(invite.id)}
-                              disabled={isActionLoading}
-                              className="bg-green-50 hover:bg-green-100"
-                            >
-                              {acceptMutation.isPending ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Check className="h-4 w-4 text-green-500" />
-                              )}
-                              <span className="ml-1">Accept</span>
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleReject(invite.id)}
-                              disabled={isActionLoading}
-                              className="bg-red-50 hover:bg-red-100"
-                            >
-                              {rejectMutation.isPending ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <X className="h-4 w-4 text-red-500" />
-                              )}
-                              <span className="ml-1">Reject</span>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </main>
+        <div className="flex flex-1 flex-col">
+          <MainNavbar />
+          <main className="flex-1 p-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>My Invites</CardTitle>
+                <CardDescription>
+                  View and manage your team invitations
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {content}
+              </CardContent>
+            </Card>
+          </main>
+        </div>
       </div>
     </SidebarProvider>
   );
