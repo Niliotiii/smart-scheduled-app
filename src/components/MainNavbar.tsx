@@ -6,7 +6,6 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
@@ -32,11 +31,11 @@ const MainNavbar = () => {
   };
 
   return (
-    <div className="w-full border-b border-border bg-card/50 py-2">
+    <div className="w-full border-b border-border bg-card/50 py-1">
       <div className="container flex items-center justify-between">
         <div className="flex items-center gap-4">
           {selectedTeam && (
-            <div className="text-lg font-medium">
+            <div className="font-medium">
               {selectedTeam.name}
               <span className="ml-2 text-sm text-muted-foreground">
                 ({getRuleName(userTeamRule)})
@@ -48,7 +47,7 @@ const MainNavbar = () => {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>
+              <NavigationMenuTrigger className="h-8">
                 <span className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   {user?.name ?? "User"}
