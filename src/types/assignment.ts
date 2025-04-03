@@ -1,12 +1,11 @@
-
 export interface Assignment {
   id: number;
-  teamId: number;
   title: string;
   description: string;
-  status?: number;
   createdAt: string;
-  updatedAt: string;
+  updatedAt: string | null;
+  teamId: number;
+  teamName: string;
 }
 
 export interface AssignmentCreateRequest {
@@ -19,29 +18,27 @@ export interface AssignmentUpdateRequest {
   description: string;
 }
 
-export interface AssignmentResponse {
+export interface ApiResponse<T> {
+  $id: string;
   success: boolean;
   message: string;
   data: {
     $id: string;
-    $values: Assignment[];
+    $values: T[];
   };
 }
 
-export interface SingleAssignmentResponse {
+export interface SingleApiResponse<T> {
+  $id: string;
   success: boolean;
   message: string;
-  data: Assignment;
+  data: T;
 }
 
-export interface AssignmentMembersResponse {
-  success: boolean;
-  message: string;
-  data: {
-    $id: string;
-    $values: AssignmentMember[];
-  };
-}
+export interface AssignmentResponse extends ApiResponse<Assignment> {}
+
+export interface SingleAssignmentResponse
+  extends SingleApiResponse<Assignment> {}
 
 export interface AssignmentMember {
   $id: string;
@@ -49,3 +46,6 @@ export interface AssignmentMember {
   email: string;
   roleName: string;
 }
+
+export interface AssignmentMembersResponse
+  extends ApiResponse<AssignmentMember> {}

@@ -9,22 +9,19 @@ const getAuthToken = () => {
 
 export const permissionService = {
   getRenderPermissions: async (
-    teamId: string | number | undefined
+    teamId?: string | number
   ): Promise<RenderPermissions> => {
-    if (!teamId) {
-      throw new Error('Team ID is required');
-    }
+    const url = teamId
+      ? `${API_URL}/Render/render?selectedTeam=${teamId}`
+      : `${API_URL}/Render/render`;
 
-    const response = await fetch(
-      `${API_URL}/Render/render?selectedTeam=${teamId.toString()}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }
-    );
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch permissions');

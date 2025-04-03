@@ -16,7 +16,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchAssignments } from '@/services/assignmentService';
 import { useQuery } from '@tanstack/react-query';
-import { ClipboardList, Pencil, Plus, Trash } from 'lucide-react';
+import { ClipboardList, Eye, Pencil, Plus, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Assignment {
@@ -47,21 +47,31 @@ const Assignments = ({ isEmbedded = false }) => {
     navigate('/assignments/create');
   };
 
+  const handleView = (id: string | number) => {
+    navigate(`/assignments/${id}`);
+  };
+
   const handleEdit = (id: string | number) => {
     navigate(`/assignments/${id}/edit`);
   };
 
   const handleDelete = (id: string | number) => {
     // Add delete logic here
+    console.log(`Delete assignment with id: ${id}`);
+    // You can use a confirmation dialog before proceeding with the deletion
+    
   };
 
   const content = (
     <>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Funções</h2>
-        <ActionButton permission="CreateAssignments" onClick={handleCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          Nova Função
+        <ActionButton
+          permission="CreateAssignments"
+          tooltip="Nova Função"
+          onClick={handleCreate}
+        >
+          <Plus className="h-4 w-4" />
         </ActionButton>
       </div>
 
@@ -86,9 +96,14 @@ const Assignments = ({ isEmbedded = false }) => {
               <p className="mt-1 text-sm text-gray-500">
                 Não há funções disponíveis para o seu time
               </p>
-              <Button onClick={handleCreate} className="mt-4">
-                Criar Função
-              </Button>
+              <ActionButton
+                permission="CreateAssignments"
+                tooltip="Nova Função"
+                onClick={handleCreate}
+                className="mt-4"
+              >
+                <Plus className="h-4 w-4" />
+              </ActionButton>
             </div>
           </CardContent>
         </Card>
@@ -111,22 +126,28 @@ const Assignments = ({ isEmbedded = false }) => {
                 <TableCell className="text-right">
                   <div className="flex justify-end space-x-2">
                     <ActionButton
-                      permission="EditAssignments"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(assignment.id)}
+                      permission="ViewAssignments"
+                      variant="ghost"
+                      tooltip="Visualizar"
+                      onClick={() => handleView(assignment.id)}
                     >
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Editar
+                      <Eye className="h-4 w-4" />
                     </ActionButton>
                     <ActionButton
-                      permission="DeleteAssignments"
+                      permission="EditAssignments"
+                      variant="outline"
+                      tooltip="Editar Função"
+                      onClick={() => handleEdit(assignment.id)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </ActionButton>
+                    <ActionButton
+                      permission="EditAssignments"
                       variant="destructive"
-                      size="sm"
+                      tooltip="Excluir Função"
                       onClick={() => handleDelete(assignment.id)}
                     >
-                      <Trash className="h-4 w-4 mr-1" />
-                      Excluir
+                      <Trash className="h-4 w-4" />
                     </ActionButton>
                   </div>
                 </TableCell>

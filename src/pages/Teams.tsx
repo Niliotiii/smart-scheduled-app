@@ -1,7 +1,6 @@
 import { ActionButton } from '@/components/ActionButton';
 import { AppSidebar } from '@/components/AppSidebar';
 import { AppTopBar } from '@/components/AppTopBar';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -32,8 +31,6 @@ interface TeamsProps {
 
 const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
   const navigate = useNavigate();
-  const { userTeamRule } = useAuth();
-  const isAdmin = userTeamRule === 1;
 
   const { data: teams = [], isLoading } = useQuery({
     queryKey: ['teams'],
@@ -69,12 +66,13 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
     <>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Times</h2>
-        {isAdmin && (
-          <ActionButton permission="CreateTeams" onClick={handleCreate}>
-            <Plus className="mr-2 h-4 w-4" />
-            Criar Time
-          </ActionButton>
-        )}
+        <ActionButton
+          permission="CreateTeams"
+          tooltip="Criar Time"
+          onClick={handleCreate}
+        >
+          <Plus className="h-4 w-4" />
+        </ActionButton>
       </div>
 
       {isLoading ? (
@@ -83,7 +81,7 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
         </div>
       ) : teams.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          Não encontrado nenhum time.
+          Nenhum time encontrado.
         </div>
       ) : (
         <Table>
@@ -101,35 +99,32 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
                 <TableCell>{team.description}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button
+                    <ActionButton
+                      permission="ViewTeam"
                       variant="outline"
-                      size="sm"
+                      tooltip="Ver Membros"
                       onClick={() => handleViewMembers(team.id)}
                     >
-                      <Users className="h-4 w-4 mr-1" />
-                      Membros
-                    </Button>
-                    {isAdmin && (
-                      <>
-                        <ActionButton
-                          permission="EditTeams"
-                          variant="outline"
-                          onClick={() => handleEdit(team.id)}
-                        >
-                          <Edit className="w-4 h-4 mr-2" />
-                          Editar
-                        </ActionButton>
+                      <Users className="h-4 w-4" />
+                    </ActionButton>
 
-                        <ActionButton
-                          permission="DeleteTeams"
-                          variant="destructive"
-                          onClick={() => handleDelete(team.id)}
-                        >
-                          <Trash className="w-4 h-4 mr-2" />
-                          Excluir
-                        </ActionButton>
-                      </>
-                    )}
+                    <ActionButton
+                      permission="EditTeams"
+                      variant="outline"
+                      tooltip="Editar Time"
+                      onClick={() => handleEdit(team.id)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </ActionButton>
+
+                    <ActionButton
+                      permission="DeleteTeams"
+                      variant="destructive"
+                      tooltip="Excluir Time"
+                      onClick={() => handleDelete(team.id)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </ActionButton>
                   </div>
                 </TableCell>
               </TableRow>

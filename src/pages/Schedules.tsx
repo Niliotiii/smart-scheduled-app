@@ -2,7 +2,6 @@ import { ActionButton } from '@/components/ActionButton';
 import { AppSidebar } from '@/components/AppSidebar';
 import { AppTopBar } from '@/components/AppTopBar';
 import SchedulesList from '@/components/SchedulesList';
-import { Button } from '@/components/ui/button';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Plus } from 'lucide-react';
@@ -13,8 +12,12 @@ const Schedules = ({ isEmbedded = false }) => {
   const navigate = useNavigate();
 
   if (!selectedTeam) {
-    return <div>Please select a team.</div>;
+    return <div>Porfavor, selecione um time.</div>;
   }
+
+  const handleCreate = () => {
+    navigate('/schedules/create');
+  };
 
   const content = (
     <>
@@ -22,13 +25,12 @@ const Schedules = ({ isEmbedded = false }) => {
         <h2 className="text-xl font-semibold">Escalas</h2>
         <ActionButton
           permission="CreateSchedules"
-          onClick={() => navigate('/schedules/create')}
+          tooltip="Criar Escala"
+          onClick={handleCreate}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Nova Escala
+          <Plus className="h-4 w-4" />
         </ActionButton>
       </div>
-
       <SchedulesList />
     </>
   );
@@ -42,16 +44,10 @@ const Schedules = ({ isEmbedded = false }) => {
           <main className="flex-1 p-6">
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold">Schedules</h1>
-                <p className="text-muted-foreground">
-                  Manage your team schedules
-                </p>
+                <h1 className="text-2xl font-bold">Escalas</h1>
+                <p className="text-muted-foreground">Gerencie suas escalas</p>
               </div>
-              <Button onClick={() => navigate('/schedules/create')}>
-                Create Schedule
-              </Button>
             </div>
-
             {content}
           </main>
         </div>

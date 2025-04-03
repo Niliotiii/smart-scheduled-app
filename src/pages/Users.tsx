@@ -26,13 +26,11 @@ export default function Users() {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Usuários</CardTitle>
         <div className="space-x-2">
-          <ActionButton permission="CreateUsers">
-            <Plus className="h-4 w-4 mr-2" />
-            Novo Usuário
+          <ActionButton permission="CreateUsers" tooltip="Novo Usuário">
+            <Plus className="h-4 w-4" />
           </ActionButton>
-          <ActionButton permission="ManageInvites">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Convidar
+          <ActionButton permission="ManageInvites" tooltip="Convidar">
+            <UserPlus className="h-4 w-4" />
           </ActionButton>
         </div>
       </CardHeader>
@@ -55,18 +53,16 @@ export default function Users() {
                     <ActionButton
                       permission="EditUsers"
                       variant="outline"
-                      size="sm"
+                      tooltip="Editar Usuário"
                     >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Editar
+                      <Edit className="h-4 w-4" />
                     </ActionButton>
                     <ActionButton
                       permission="DeleteUsers"
                       variant="destructive"
-                      size="sm"
+                      tooltip="Remover Usuário"
                     >
-                      <Trash className="h-4 w-4 mr-1" />
-                      Remover
+                      <Trash className="h-4 w-4" />
                     </ActionButton>
                   </div>
                 </TableCell>

@@ -1,9 +1,12 @@
 
 export interface Assigned {
   id: number;
-  scheduledId: number;
-  assignmentId: number;
-  memberId: number;
+  title: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  }
   createdAt: string;
   updatedAt: string;
 }

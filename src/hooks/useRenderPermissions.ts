@@ -11,12 +11,15 @@ export function useRenderPermissions(
 ): UseQueryResult<RenderPermissions> {
   return useQuery<RenderPermissions>({
     queryKey: ['render', selectedTeam?.id],
-    queryFn: () => permissionService.getRenderPermissions(selectedTeam?.id),
-    enabled: !!selectedTeam?.id,
-    staleTime: 10000,
-    gcTime: 0,
-    retry: (failureCount, error) => {
-      return failureCount < 3 && error instanceof Error;
+    queryFn: () => {
+      if (!selectedTeam?.id) {
+        return permissionService.getRenderPermissions();
+      }
+      return permissionService.getRenderPermissions(selectedTeam.id);
     },
+    refetchInterval: 30000,
+    enabled: true,
+    staleTime: 25000,
+    gcTime: 60000,
   });
 }

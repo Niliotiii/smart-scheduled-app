@@ -1,6 +1,8 @@
 import {
+  Assignment,
   AssignmentCreateRequest,
   AssignmentMembersResponse,
+  AssignmentResponse,
   AssignmentUpdateRequest,
   SingleAssignmentResponse,
 } from '@/types/assignment';
@@ -12,31 +14,23 @@ const getAuthToken = () => {
   return localStorage.getItem('authToken');
 };
 
-interface Assignment {
-  id: string | number;
-  title: string;
-  description: string;
-}
-
 // Get all assignments for a team
 export const fetchAssignments = async (
   teamId: string | number
 ): Promise<Assignment[]> => {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/api/assignments?teamId=${teamId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  const response = await fetch(`${API_URL}/teams/${teamId}/Assignment`, {
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      'Content-Type': 'application/json',
+    },
+  });
 
   if (!response.ok) {
     throw new Error('Failed to fetch assignments');
   }
 
-  return response.json();
+  const result: AssignmentResponse = await response.json();
+  return result.data.$values;
 };
 
 // Get assignment by id
@@ -55,8 +49,8 @@ export const fetchAssignmentById = async (
     throw new Error('Failed to fetch assignment');
   }
 
-  const data: SingleAssignmentResponse = await response.json();
-  return data.data;
+  const result: SingleAssignmentResponse = await response.json();
+  return result.data;
 };
 
 // Create new assignment
@@ -77,8 +71,8 @@ export const createAssignment = async (
     throw new Error('Failed to create assignment');
   }
 
-  const data = await response.json();
-  return data.data;
+  const result: SingleAssignmentResponse = await response.json();
+  return result.data;
 };
 
 // Update assignment
@@ -100,8 +94,8 @@ export const updateAssignment = async (
     throw new Error('Failed to update assignment');
   }
 
-  const data = await response.json();
-  return data.data;
+  const result: SingleAssignmentResponse = await response.json();
+  return result.data;
 };
 
 // Delete assignment
@@ -141,6 +135,6 @@ export const fetchAssignmentMembers = async (
     throw new Error('Failed to fetch assignment members');
   }
 
-  const data = await response.json();
-  return data;
+  const result: AssignmentMembersResponse = await response.json();
+  return result;
 };

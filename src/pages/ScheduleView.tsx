@@ -57,10 +57,6 @@ const ScheduleView = () => {
   const { selectedTeam } = useAuth();
   const teamId = selectedTeam?.id || 0;
 
-  const [assignmentsData, setAssignmentsData] = useState<{
-    [key: number]: Assignment;
-  }>({});
-  const [membersData, setMembersData] = useState<{ [key: number]: any }>({});
 
   const { data: schedule, isLoading: isLoadingSchedule } = useQuery({
     queryKey: ['schedule', teamId, scheduleId],
@@ -68,54 +64,15 @@ const ScheduleView = () => {
     enabled: !!teamId && !!scheduleId,
   });
 
-  const { data: members } = useQuery({
-    queryKey: ['teamMembers', teamId],
-    queryFn: () => fetchTeamMembers(teamId),
-    enabled: !!teamId,
-  });
-
-  useEffect(() => {
-    if (members) {
-      const membersMap = {};
-      members.forEach((member) => {
-        membersMap[member.id] = member;
-      });
-      setMembersData(membersMap);
-    }
-  }, [members]);
-
   const {
     data: assignedTasks,
     isLoading: isLoadingAssigned,
     refetch: refetchAssigned,
   } = useQuery({
     queryKey: ['assignedTasks', scheduleId],
-    queryFn: () => fetchAssignedByScheduleId(scheduleId),
+    queryFn: () => fetchAssignedByScheduleId(teamId, scheduleId),
     enabled: !!scheduleId,
   });
-
-  useEffect(() => {
-    const fetchAssignmentDetails = async () => {
-      if (!assignedTasks || !teamId) return;
-
-      const assignments = {};
-      for (const task of assignedTasks) {
-        try {
-          const assignment = await fetchAssignmentById(
-            teamId,
-            task.assignmentId
-          );
-          assignments[task.assignmentId] = assignment;
-        } catch (error) {
-          console.error('Error fetching assignment:', error);
-        }
-      }
-
-      setAssignmentsData(assignments);
-    };
-
-    fetchAssignmentDetails();
-  }, [assignedTasks, teamId]);
 
   const deleteScheduleMutation = useMutation({
     mutationFn: () => deleteSchedule(teamId, scheduleId),
@@ -133,7 +90,7 @@ const ScheduleView = () => {
   });
 
   const deleteAssignedMutation = useMutation({
-    mutationFn: (assignedId: number) => deleteAssigned(assignedId),
+    mutationFn: (assignedId: number) => deleteAssigned(teamId, assignedId),
     onSuccess: () => {
       toast.success('Assignment removed from schedule');
       refetchAssigned();
@@ -205,32 +162,6 @@ const ScheduleView = () => {
                   <Edit className="h-4 w-4 mr-2" />
                   Editar Escala
                 </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Excluir
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                      Esta ação não pode ser desfeita. Isso excluirá permanentemente
-                      esta escala e todas as funções atribuídas.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDeleteSchedule}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
               </div>
             </div>
 
@@ -267,7 +198,6 @@ const ScheduleView = () => {
                 <CardTitle>Funções</CardTitle>
                 <CardDescription>
                   Funções adicionadas a esta escala. Você pode adicionar ou remover
-
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -280,37 +210,30 @@ const ScheduleView = () => {
                     <ClipboardList className="h-12 w-12 mx-auto mb-4 text-gray-400" />
                     <h3 className="text-lg font-medium">Nenhuma Função Adicionada</h3>
                     <p className="text-gray-500 mt-2">
-                      Go to the Assign page to assign tasks to members for this
-                      schedule.
+                      Adicione funções a esta escala para começar.
                     </p>
-                    <Button
-                      onClick={() => navigate('/assign')}
-                      className="mt-4"
-                    >
-                      Assign Tasks
-                    </Button>
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Assignment</TableHead>
-                        <TableHead>Team Member</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead>Função</TableHead>
+                        <TableHead>Usuário</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {assignedTasks.map((task) => (
                         <TableRow key={task.id}>
                           <TableCell>
-                            {assignmentsData[task.assignmentId]?.title || (
+                            {task?.title || (
                               <span className="text-gray-400">Loading...</span>
                             )}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <UserRound className="h-4 w-4 mr-2 text-blue-500" />
-                              {membersData[task.memberId]?.name ||
+                              {task?.user.name ||
                                 'Unknown Member'}
                             </div>
                           </TableCell>
@@ -324,22 +247,21 @@ const ScheduleView = () => {
                               <AlertDialogContent>
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>
-                                    Are you sure?
+                                    Tem certeza?
                                   </AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    This will remove this assignment from the
-                                    schedule.
+                                    Isso removera a função da escala.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                   <AlertDialogAction
                                     onClick={() =>
                                       handleRemoveAssignment(task.id)
                                     }
                                     className="bg-red-600 hover:bg-red-700"
                                   >
-                                    Remove
+                                    Excluir
                                   </AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>
@@ -351,11 +273,6 @@ const ScheduleView = () => {
                   </Table>
                 )}
               </CardContent>
-              <CardFooter>
-                <Button onClick={() => navigate('/assign')} className="ml-auto">
-                  Assign More Tasks
-                </Button>
-              </CardFooter>
             </Card>
           </>
         )}

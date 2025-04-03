@@ -1,10 +1,6 @@
-
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/contexts/AuthContext";
-import { fetchSchedules } from "@/services/scheduleService";
-import { format } from "date-fns";
+import { ActionButton } from '@/components/ActionButton';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -12,11 +8,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Calendar, Pencil, Trash } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@/components/ui/table';
+import { useAuth } from '@/contexts/AuthContext';
+import { fetchSchedules } from '@/services/scheduleService';
+import { useQuery } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { Calendar, Edit, Eye, Trash } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const SchedulesList = () => {
   const { selectedTeam } = useAuth();
@@ -27,10 +25,22 @@ const SchedulesList = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["schedules", selectedTeam?.id],
+    queryKey: ['schedules', selectedTeam?.id],
     queryFn: () => fetchSchedules(selectedTeam!.id),
     enabled: !!selectedTeam,
   });
+
+  const handleView = (id: string | number) => {
+    navigate(`/schedules/${id}`);
+  };
+
+  const handleEdit = (id: string | number) => {
+    navigate(`/schedules/${id}/edit`);
+  };
+
+  const handleDelete = (id: string | number) => {
+    // Add delete logic here
+  };
 
   if (isLoading) {
     return (
@@ -64,16 +74,13 @@ const SchedulesList = () => {
         <CardContent className="p-4">
           <div className="text-center">
             <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-lg font-medium">No schedules found</h3>
+            <h3 className="mt-2 text-lg font-medium">
+              Nenhuma escala encontrada
+            </h3>
             <p className="mt-1 text-sm text-gray-500">
-              Create your first schedule to get started
+              Você ainda não tem escalas criadas. Crie uma nova escala para
+              começar.
             </p>
-            <Button
-              onClick={() => navigate("/schedules/create")}
-              className="mt-4"
-            >
-              Create Schedule
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -84,11 +91,11 @@ const SchedulesList = () => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Title</TableHead>
-          <TableHead>Description</TableHead>
-          <TableHead>Start Date</TableHead>
-          <TableHead>End Date</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          <TableHead>Título</TableHead>
+          <TableHead>Descrição</TableHead>
+          <TableHead>Data Inicial</TableHead>
+          <TableHead>Data Final</TableHead>
+          <TableHead className="text-right">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -96,26 +103,36 @@ const SchedulesList = () => {
           <TableRow key={schedule.id}>
             <TableCell className="font-medium">{schedule.title}</TableCell>
             <TableCell>{schedule.description}</TableCell>
-            <TableCell>
-              {format(new Date(schedule.startDate), "PPP")}
-            </TableCell>
-            <TableCell>{format(new Date(schedule.endDate), "PPP")}</TableCell>
+            <TableCell>{format(new Date(schedule.startDate), 'PPP')}</TableCell>
+            <TableCell>{format(new Date(schedule.endDate), 'PPP')}</TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end space-x-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigate(`/schedules/${schedule.id}`)}
+                <ActionButton
+                  permission="ViewSchedules"
+                  variant="ghost"
+                  tooltip="Visualizar"
+                  onClick={() => handleView(schedule.id)}
                 >
-                  <Calendar className="h-4 w-4" />
-                </Button>
-                <Button
+                  <Eye className="h-4 w-4" />
+                </ActionButton>
+
+                <ActionButton
+                  permission="EditSchedules"
                   variant="outline"
-                  size="icon"
-                  onClick={() => navigate(`/schedules/${schedule.id}/edit`)}
+                  tooltip="Editar"
+                  onClick={() => handleEdit(schedule.id)}
                 >
-                  <Pencil className="h-4 w-4" />
-                </Button>
+                  <Edit className="h-4 w-4" />
+                </ActionButton>
+
+                <ActionButton
+                  permission="DeleteSchedules"
+                  variant="destructive"
+                  tooltip="Excluir"
+                  onClick={() => handleDelete(schedule.id)}
+                >
+                  <Trash className="h-4 w-4" />
+                </ActionButton>
               </div>
             </TableCell>
           </TableRow>
