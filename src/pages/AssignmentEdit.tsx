@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchAssignment, updateAssignment } from "@/services/assignmentService";
+import { fetchAssignmentById, updateAssignment } from "@/services/assignmentService";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -29,10 +29,10 @@ const AssignmentEdit = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  // Query to fetch assignment details
+  // Query to fetch assignment details - fixed function name from fetchAssignment to fetchAssignmentById
   const { data: assignment, isLoading } = useQuery({
     queryKey: ['assignment', teamId, assignmentId],
-    queryFn: () => fetchAssignment(teamId, assignmentId),
+    queryFn: () => fetchAssignmentById(teamId, assignmentId),
     enabled: !!teamId && !!assignmentId,
   });
 
