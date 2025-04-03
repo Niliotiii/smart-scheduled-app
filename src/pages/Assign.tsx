@@ -107,8 +107,12 @@ const Assign = () => {
                     <SelectValue placeholder="Select a team member" />
                   </SelectTrigger>
                   <SelectContent>
-                    {members?.map((member: any) => (
-                      <SelectItem key={member.id || member.email} value={member.id?.toString() || ""}>
+                    {members?.map((member) => (
+                      // Ensure we have a valid value string that is not empty
+                      <SelectItem 
+                        key={member.id || `member-${member.email}`} 
+                        value={member.id?.toString() || `fallback-${member.email}`}
+                      >
                         {member.name} ({member.email})
                       </SelectItem>
                     ))}
@@ -128,7 +132,11 @@ const Assign = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {assignments?.map((assignment) => (
-                      <SelectItem key={assignment.id} value={assignment.id.toString()}>
+                      // Ensure we have a valid value string that is not empty
+                      <SelectItem 
+                        key={assignment.id} 
+                        value={assignment.id?.toString() || `assignment-${assignment.title}`}
+                      >
                         {assignment.title}
                       </SelectItem>
                     ))}
@@ -148,7 +156,11 @@ const Assign = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {schedules?.map((schedule) => (
-                      <SelectItem key={schedule.id} value={schedule.id.toString()}>
+                      // Ensure we have a valid value string that is not empty
+                      <SelectItem 
+                        key={schedule.id} 
+                        value={schedule.id?.toString() || `schedule-${schedule.title}`}
+                      >
                         {schedule.title} ({new Date(schedule.startDate).toLocaleDateString()} - {new Date(schedule.endDate).toLocaleDateString()})
                       </SelectItem>
                     ))}

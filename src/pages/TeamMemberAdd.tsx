@@ -126,7 +126,10 @@ const TeamMemberAdd = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {users?.map((user: User) => (
-                        <SelectItem key={user.id} value={user.id.toString()}>
+                        <SelectItem 
+                          key={user.id} 
+                          value={user.id.toString() || `user-${user.email}`}
+                        >
                           {user.name} ({user.email})
                         </SelectItem>
                       ))}
