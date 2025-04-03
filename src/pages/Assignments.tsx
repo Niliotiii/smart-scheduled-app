@@ -1,10 +1,8 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { fetchAssignments } from "@/services/assignmentService";
-import { format } from "date-fns";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import MainNavbar from "@/components/MainNavbar";
@@ -149,7 +147,7 @@ const Assignments = () => {
                     <TableRow key={assignment.id}>
                       <TableCell className="font-medium">{assignment.title}</TableCell>
                       <TableCell>{assignment.description}</TableCell>
-                      <TableCell>{getStatusBadge(assignment.status)}</TableCell>
+                      <TableCell>{getStatusBadge(assignment.status || 0)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end space-x-2">
                           <Button
