@@ -1,14 +1,5 @@
-import { AppSidebar } from '@/components/AppSidebar';
-import { AppTopBar } from '@/components/AppTopBar';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { ActionButton } from '@/components/ActionButton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -17,63 +8,35 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { fetchUsers } from '@/services/userService';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, Plus, User } from 'lucide-react';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Edit, Plus, Trash, UserPlus } from 'lucide-react';
 
-interface UsersProps {
-  isEmbedded?: boolean;
-}
-
-const Users: React.FC<UsersProps> = ({ isEmbedded = false }) => {
-  const navigate = useNavigate();
-
-  const { data: users = [], isLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: fetchUsers,
-    meta: {
-      onError: () => {
-        toast({
-          title: 'Error',
-          description: 'Failed to load users',
-          variant: 'destructive',
-        });
-      },
-    },
+export default function Users() {
+  const { selectedTeam } = useAuth();
+  const { data: users, isLoading } = useQuery({
+    queryKey: ['users', selectedTeam?.id],
+    queryFn: () => fetchUsers(),
+    enabled: !!selectedTeam?.id,
   });
 
-  const handleCreate = () => {
-    navigate('/users/create');
-  };
-
-  const handleView = (id: number) => {
-    navigate(`/users/${id}`);
-  };
-
-  const handleEdit = (id: number) => {
-    navigate(`/users/${id}/edit`);
-  };
-
-  const content = (
-    <>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Usuários</h2>
-        <Button onClick={handleCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          Criar Usuário
-        </Button>
-      </div>
-
-      {isLoading ? (
-        <div className="flex justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Usuários</CardTitle>
+        <div className="space-x-2">
+          <ActionButton permission="CreateUsers">
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Usuário
+          </ActionButton>
+          <ActionButton permission="ManageInvites">
+            <UserPlus className="h-4 w-4 mr-2" />
+            Convidar
+          </ActionButton>
         </div>
-      ) : users.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">Nenhum usuário encontrado.</div>
-      ) : (
+      </CardHeader>
+      <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
@@ -83,60 +46,35 @@ const Users: React.FC<UsersProps> = ({ isEmbedded = false }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
+            {users?.map((user) => (
               <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.name}</TableCell>
+                <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button
+                    <ActionButton
+                      permission="EditUsers"
                       variant="outline"
                       size="sm"
-                      onClick={() => handleView(user.id)}
                     >
-                      <User className="h-4 w-4 mr-1" />
-                      Visualizar
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(user.id)}
-                    >
+                      <Edit className="h-4 w-4 mr-1" />
                       Editar
-                    </Button>
+                    </ActionButton>
+                    <ActionButton
+                      permission="DeleteUsers"
+                      variant="destructive"
+                      size="sm"
+                    >
+                      <Trash className="h-4 w-4 mr-1" />
+                      Remover
+                    </ActionButton>
                   </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-      )}
-    </>
+      </CardContent>
+    </Card>
   );
-
-  if (isEmbedded) {
-    return content;
-  }
-
-  return (
-    <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <div className="flex flex-1 flex-col">
-          <AppTopBar />
-          <main className="flex-1 p-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Usuários</CardTitle>
-                <CardDescription>Gerencie os usuários do sistema</CardDescription>
-              </CardHeader>
-              <CardContent>{content}</CardContent>
-            </Card>
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
-  );
-};
-
-export default Users;
+}

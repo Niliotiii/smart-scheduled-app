@@ -1,18 +1,37 @@
+import { ActionButton } from '@/components/ActionButton';
 import { AppSidebar } from '@/components/AppSidebar';
 import { AppTopBar } from '@/components/AppTopBar';
 import SchedulesList from '@/components/SchedulesList';
 import { Button } from '@/components/ui/button';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/AuthContext';
+import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Schedules = () => {
+const Schedules = ({ isEmbedded = false }) => {
   const { selectedTeam } = useAuth();
   const navigate = useNavigate();
 
   if (!selectedTeam) {
     return <div>Please select a team.</div>;
   }
+
+  const content = (
+    <>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Escalas</h2>
+        <ActionButton
+          permission="CreateSchedules"
+          onClick={() => navigate('/schedules/create')}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Nova Escala
+        </ActionButton>
+      </div>
+
+      <SchedulesList />
+    </>
+  );
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -33,7 +52,7 @@ const Schedules = () => {
               </Button>
             </div>
 
-            <SchedulesList />
+            {content}
           </main>
         </div>
       </div>

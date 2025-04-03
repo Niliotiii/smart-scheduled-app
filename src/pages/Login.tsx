@@ -1,16 +1,22 @@
-
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Lock, LogIn, User } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { Eye, EyeOff, Lock, LogIn, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
@@ -19,31 +25,21 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!username || !password) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     setIsLoading(true);
-    
+
     try {
       await login(username, password);
       toast({
-        title: "Login realizado com sucesso",
-        description: "Você será redirecionado para a página inicial",
+        title: 'Login realizado com sucesso',
+        description: 'Selecione um time para continuar',
       });
-      navigate("/");
+      navigate('/team-selection'); // Always redirect to team selection first
     } catch (error) {
-      console.error("Erro no login:", error);
+      console.error('Erro no login:', error);
       toast({
-        title: "Erro de autenticação",
-        description: "Nome de usuário ou senha incorretos",
-        variant: "destructive",
+        title: 'Erro de autenticação',
+        description: 'Nome de usuário ou senha incorretos',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -89,7 +85,7 @@ const Login = () => {
                 </div>
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Senha"
                   className="pl-10 pr-10"
                   value={password}
@@ -110,9 +106,9 @@ const Login = () => {
             </div>
           </CardContent>
           <CardFooter>
-            <Button 
-              type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700" 
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={isLoading}
             >
               {isLoading ? (

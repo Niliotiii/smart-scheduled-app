@@ -1,19 +1,28 @@
-
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { fetchTeams } from "@/services/teamService";
-import { Team } from "@/types/team";
-import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { Users, User } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
+import { permissionService } from '@/services/permissionService';
+import { fetchTeams } from '@/services/teamService';
+import { Team } from '@/types/team';
+import { useQueryClient } from '@tanstack/react-query';
+import { User, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TeamSelection = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, selectTeam } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const getTeams = async () => {
@@ -22,11 +31,11 @@ const TeamSelection = () => {
         const teamsData = await fetchTeams();
         setTeams(teamsData);
       } catch (error) {
-        console.error("Failed to fetch teams:", error);
+        console.error('Failed to fetch teams:', error);
         toast({
-          title: "Error",
-          description: "Failed to load teams. Please try again.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load teams. Please try again.',
+          variant: 'destructive',
         });
       } finally {
         setLoading(false);
@@ -36,14 +45,32 @@ const TeamSelection = () => {
     getTeams();
   }, []);
 
-  const handleTeamSelection = (team: Team) => {
-    // Here we can store the selected team in localStorage or context
-    localStorage.setItem("selectedTeam", JSON.stringify(team));
-    toast({
-      title: "Team Selected",
-      description: `You've selected ${team.name}`,
-    });
-    navigate("/");
+  const handleTeamSelection = async (team: Team) => {
+    try {
+      setLoading(true);
+      selectTeam(team);
+
+      // Prefetch permissions
+      await queryClient.prefetchQuery({
+        queryKey: ['render', team.id],
+        queryFn: () => permissionService.getRenderPermissions(team.id),
+      });
+
+      toast({
+        title: 'Time Selecionado',
+        description: `Você selecionou ${team.name}`,
+      });
+
+      navigate('/');
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: 'Falha ao selecionar o time',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,7 +80,7 @@ const TeamSelection = () => {
           <h1 className="text-2xl font-bold text-blue-700">Team Selection</h1>
           <div className="flex items-center gap-2 text-gray-600">
             <User className="h-5 w-5" />
-            <span>{user?.username || "User"}</span>
+            <span>{user?.username || 'User'}</span>
           </div>
         </div>
       </header>
@@ -74,8 +101,8 @@ const TeamSelection = () => {
             ) : teams.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {teams.map((team) => (
-                  <Card 
-                    key={team.id} 
+                  <Card
+                    key={team.id}
                     className="hover:shadow-lg transition-shadow cursor-pointer"
                     onClick={() => handleTeamSelection(team)}
                   >
@@ -90,7 +117,9 @@ const TeamSelection = () => {
                         <Users className="h-4 w-4 mr-1" />
                         <span className="text-sm">Team</span>
                       </div>
-                      <Button size="sm" variant="outline">Select</Button>
+                      <Button size="sm" variant="outline">
+                        Select
+                      </Button>
                     </CardFooter>
                   </Card>
                 ))}

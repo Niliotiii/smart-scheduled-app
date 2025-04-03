@@ -14,6 +14,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRenderPermissions } from '@/hooks/useRenderPermissions';
 import {
   Briefcase,
   Calendar,
@@ -27,9 +28,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 export function AppSidebar() {
   const { selectedTeam, logout, clearTeamSelection, userTeamRule } = useAuth();
+  const { data: permissions } = useRenderPermissions(selectedTeam);
   const navigate = useNavigate();
   const location = useLocation();
-  const isAdmin = userTeamRule === 3; // 3 = Admin
 
   const handleLogout = () => {
     logout();
@@ -42,6 +43,7 @@ export function AppSidebar() {
   };
 
   const handleSettingsAdmin = () => {
+    console.log(permissions);
     navigate('/admin');
   };
 
@@ -57,24 +59,30 @@ export function AppSidebar() {
       icon: Briefcase,
       path: '/',
       isActive: location.pathname === '/',
+      show: true,
     },
     {
-      label: 'Funões',
+      label: 'Funções',
       icon: ClipboardList,
       path: '/assignments',
       isActive: isActive('/assignments'),
+      show: permissions?.teamRulePermissions.ViewAssignments,
     },
     {
       label: 'Escalas',
       icon: Calendar,
       path: '/schedules',
       isActive: isActive('/schedules'),
+      show: permissions?.teamRulePermissions.ViewSchedules,
     },
     {
       label: 'Times',
-      icon: Calendar,
+      icon: Users,
       path: `/teams`,
       isActive: isActive('/teams'),
+      show:
+        permissions?.rolePermissions.ViewTeams ||
+        permissions?.rolePermissions.ViewOwnTeams,
     },
   ];
 
@@ -96,6 +104,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems
+                .filter((item) => item.show)
                 .map((item) => (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton
@@ -114,24 +123,16 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="border-t border-border p-4">
         <div className="space-y-2">
-          {isAdmin && (
+          {permissions.rolePermissions.ManageSystem && (
             <Button
               variant="outline"
               className="w-full justify-start gap-2"
-              onClick={() => navigate('/admin')}
+              onClick={handleSettingsAdmin}
             >
               <Settings className="h-4 w-4" />
-              Admin Panel
+              Administrador
             </Button>
           )}
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-2"
-            onClick={handleSettingsAdmin}
-          >
-            <Users className="h-4 w-4" />
-            Administrador
-          </Button>
           <Button
             variant="outline"
             className="w-full justify-start gap-2"

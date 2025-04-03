@@ -1,3 +1,4 @@
+import { ActionButton } from '@/components/ActionButton';
 import { AppSidebar } from '@/components/AppSidebar';
 import { AppTopBar } from '@/components/AppTopBar';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { fetchTeams } from '@/services/teamService';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, Plus, Users } from 'lucide-react';
+import { Edit, Loader2, Plus, Trash, Users } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -60,15 +61,19 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
     navigate(`/teams/${id}/members`);
   };
 
+  const handleDelete = (id: number) => {
+    // Add delete logic here
+  };
+
   const content = (
     <>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Times</h2>
         {isAdmin && (
-          <Button onClick={handleCreate}>
+          <ActionButton permission="CreateTeams" onClick={handleCreate}>
             <Plus className="mr-2 h-4 w-4" />
             Criar Time
-          </Button>
+          </ActionButton>
         )}
       </div>
 
@@ -77,7 +82,9 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
           <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
         </div>
       ) : teams.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">Não encontrado nenhum time.</div>
+        <div className="text-center py-8 text-gray-500">
+          Não encontrado nenhum time.
+        </div>
       ) : (
         <Table>
           <TableHeader>
@@ -103,13 +110,25 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
                       Membros
                     </Button>
                     {isAdmin && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(team.id)}
-                      >
-                        Editar
-                      </Button>
+                      <>
+                        <ActionButton
+                          permission="EditTeams"
+                          variant="outline"
+                          onClick={() => handleEdit(team.id)}
+                        >
+                          <Edit className="w-4 h-4 mr-2" />
+                          Editar
+                        </ActionButton>
+
+                        <ActionButton
+                          permission="DeleteTeams"
+                          variant="destructive"
+                          onClick={() => handleDelete(team.id)}
+                        >
+                          <Trash className="w-4 h-4 mr-2" />
+                          Excluir
+                        </ActionButton>
+                      </>
                     )}
                   </div>
                 </TableCell>

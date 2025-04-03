@@ -6,6 +6,7 @@ export interface Invite {
   userId: number;
   userName: string;
   teamRule: number;
+  email: string;
   status: string;
   createdAt: string;
   updatedAt: string;
