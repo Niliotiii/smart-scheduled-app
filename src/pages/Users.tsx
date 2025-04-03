@@ -1,20 +1,14 @@
-
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUsers } from "@/services/userService";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { Loader2, Plus, User } from "lucide-react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar } from '@/components/AppSidebar';
+import { AppTopBar } from '@/components/AppTopBar';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import {
   Table,
   TableBody,
@@ -22,7 +16,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
+import { toast } from '@/hooks/use-toast';
+import { fetchUsers } from '@/services/userService';
+import { useQuery } from '@tanstack/react-query';
+import { Loader2, Plus, User } from 'lucide-react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface UsersProps {
   isEmbedded?: boolean;
@@ -30,23 +30,23 @@ interface UsersProps {
 
 const Users: React.FC<UsersProps> = ({ isEmbedded = false }) => {
   const navigate = useNavigate();
-  
+
   const { data: users = [], isLoading } = useQuery({
-    queryKey: ["users"],
+    queryKey: ['users'],
     queryFn: fetchUsers,
     meta: {
       onError: () => {
         toast({
-          title: "Error",
-          description: "Failed to load users",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load users',
+          variant: 'destructive',
         });
-      }
-    }
+      },
+    },
   });
 
   const handleCreate = () => {
-    navigate("/users/create");
+    navigate('/users/create');
   };
 
   const handleView = (id: number) => {
@@ -60,28 +60,26 @@ const Users: React.FC<UsersProps> = ({ isEmbedded = false }) => {
   const content = (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Users List</h2>
+        <h2 className="text-xl font-semibold">Usuários</h2>
         <Button onClick={handleCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          Create User
+          Criar Usuário
         </Button>
       </div>
-      
+
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
         </div>
       ) : users.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          No users found.
-        </div>
+        <div className="text-center py-8 text-gray-500">Nenhum usuário encontrado.</div>
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>Nome</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -91,20 +89,20 @@ const Users: React.FC<UsersProps> = ({ isEmbedded = false }) => {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => handleView(user.id)}
                     >
                       <User className="h-4 w-4 mr-1" />
-                      View
+                      Visualizar
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => handleEdit(user.id)}
                     >
-                      Edit
+                      Editar
                     </Button>
                   </div>
                 </TableCell>
@@ -122,20 +120,17 @@ const Users: React.FC<UsersProps> = ({ isEmbedded = false }) => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full flex-col">
+      <div className="flex min-h-screen w-full">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
+          <AppTopBar />
           <main className="flex-1 p-6">
             <Card>
               <CardHeader>
-                <CardTitle>Users</CardTitle>
-                <CardDescription>
-                  Manage system users
-                </CardDescription>
+                <CardTitle>Usuários</CardTitle>
+                <CardDescription>Gerencie os usuários do sistema</CardDescription>
               </CardHeader>
-              <CardContent>
-                {content}
-              </CardContent>
+              <CardContent>{content}</CardContent>
             </Card>
           </main>
         </div>

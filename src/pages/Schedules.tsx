@@ -1,10 +1,10 @@
-import React from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import SchedulesList from "@/components/SchedulesList";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { AppSidebar } from '@/components/AppSidebar';
+import { AppTopBar } from '@/components/AppTopBar';
+import SchedulesList from '@/components/SchedulesList';
+import { Button } from '@/components/ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Schedules = () => {
   const { selectedTeam } = useAuth();
@@ -16,9 +16,10 @@ const Schedules = () => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full flex-col">
+      <div className="flex min-h-screen w-full">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
+          <AppTopBar />
           <main className="flex-1 p-6">
             <div className="mb-6 flex items-center justify-between">
               <div>
@@ -27,11 +28,11 @@ const Schedules = () => {
                   Manage your team schedules
                 </p>
               </div>
-              <Button onClick={() => navigate("/schedules/create")}>
+              <Button onClick={() => navigate('/schedules/create')}>
                 Create Schedule
               </Button>
             </div>
-            
+
             <SchedulesList />
           </main>
         </div>

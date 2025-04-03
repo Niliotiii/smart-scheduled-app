@@ -15,7 +15,6 @@ import Teams from "./pages/Teams";
 import CreateTeam from "./pages/CreateTeam";
 import EditTeam from "./pages/EditTeam";
 import TeamMembers from "./pages/TeamMembers";
-import TeamMemberAdd from "./pages/TeamMemberAdd";
 import TeamInvites from "./pages/TeamInvites";
 import UserInvites from "./pages/UserInvites";
 import Users from "./pages/Users";
@@ -101,14 +100,6 @@ const App = () => {
                   element={
                     <ProtectedContent requireTeam={true}>
                       <TeamMembers />
-                    </ProtectedContent>
-                  } 
-                />
-                <Route 
-                  path="/teams/:id/members/add" 
-                  element={
-                    <ProtectedContent requireTeam={true}>
-                      <TeamMemberAdd />
                     </ProtectedContent>
                   } 
                 />

@@ -54,10 +54,6 @@ const TeamMembers = () => {
 
   const isLoading = isLoadingTeam || isLoadingMembers;
 
-  const handleAddMember = () => {
-    navigate(`/teams/${teamId}/members/add`);
-  };
-
   const handleManageInvites = () => {
     navigate(`/teams/${teamId}/invites`);
   };
@@ -82,44 +78,40 @@ const TeamMembers = () => {
         <main className="flex-1 p-6">
           <Button 
             variant="ghost" 
-            onClick={() => navigate("/teams")} 
+            onClick={() => navigate("/admin")} 
             className="mb-4 flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Teams
+            Voltar Para Times
           </Button>
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Team Members - {team?.name}</CardTitle>
+                <CardTitle>Membros - {team?.name}</CardTitle>
                 <CardDescription>
-                  View all members of this team
+                  Visualizar e gerenciar os membros do time.
                 </CardDescription>
               </div>
               <div className="flex gap-2">
                 <Button className="flex gap-2 items-center" onClick={handleManageInvites}>
                   <Mail className="h-4 w-4" />
-                  Invites
-                </Button>
-                <Button className="flex gap-2 items-center" onClick={handleAddMember}>
-                  <UserPlus className="h-4 w-4" />
-                  Add Member
+                  Convites
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
               {members.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No members found in this team.
+                  Não encontrado membros no time.
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
+                      <TableHead>Nome</TableHead>
                       <TableHead>Email</TableHead>
-                      <TableHead>Role</TableHead>
+                      <TableHead>Permissão</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

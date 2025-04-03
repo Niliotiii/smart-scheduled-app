@@ -1,7 +1,4 @@
-
-import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -15,18 +12,18 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar';
+import { useAuth } from '@/contexts/AuthContext';
 import {
-  Users,
-  UserPlus,
   Briefcase,
   Calendar,
-  LogOut,
   CalendarClock,
   ClipboardList,
+  LogOut,
   Settings,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+  Users,
+} from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export function AppSidebar() {
   const { selectedTeam, logout, clearTeamSelection, userTeamRule } = useAuth();
@@ -36,48 +33,49 @@ export function AppSidebar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate('/login');
   };
 
   const handleChangeTeam = () => {
     clearTeamSelection();
-    navigate("/team-selection");
+    navigate('/team-selection');
   };
 
   const handleSettingsAdmin = () => {
-    navigate("/admin");
+    navigate('/admin');
   };
 
   const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+    return (
+      location.pathname === path || location.pathname.startsWith(`${path}/`)
+    );
   };
 
   const menuItems = [
     {
-      label: "Dashboard",
+      label: 'Dashboard',
       icon: Briefcase,
-      path: "/",
-      isActive: location.pathname === "/",
+      path: '/',
+      isActive: location.pathname === '/',
     },
     {
-      label: "Assignments",
+      label: 'Funões',
       icon: ClipboardList,
-      path: "/assignments",
-      isActive: isActive("/assignments"),
+      path: '/assignments',
+      isActive: isActive('/assignments'),
     },
     {
-      label: "Schedule",
+      label: 'Escalas',
       icon: Calendar,
-      path: "/schedules",
-      isActive: isActive("/schedules"),
+      path: '/schedules',
+      isActive: isActive('/schedules'),
     },
     {
-      label: "Admin",
-      icon: Settings,
-      path: "/admin",
-      isActive: isActive("/admin"),
-      show: isAdmin,
-    }
+      label: 'Times',
+      icon: Calendar,
+      path: `/teams`,
+      isActive: isActive('/teams'),
+    },
   ];
 
   return (
@@ -94,23 +92,22 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{selectedTeam?.name || "Dashboard"}</SidebarGroupLabel>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems
-                .filter(item => item.show !== false)
                 .map((item) => (
-                <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton
-                    isActive={item.isActive}
-                    tooltip={item.label}
-                    onClick={() => navigate(item.path)}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                  <SidebarMenuItem key={item.label}>
+                    <SidebarMenuButton
+                      isActive={item.isActive}
+                      tooltip={item.label}
+                      onClick={() => navigate(item.path)}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -133,7 +130,7 @@ export function AppSidebar() {
             onClick={handleSettingsAdmin}
           >
             <Users className="h-4 w-4" />
-            Settings Admin
+            Administrador
           </Button>
           <Button
             variant="outline"
@@ -141,7 +138,7 @@ export function AppSidebar() {
             onClick={handleChangeTeam}
           >
             <Users className="h-4 w-4" />
-            Change Team
+            Trocar Time
           </Button>
           <Button
             variant="destructive"

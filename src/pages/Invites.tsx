@@ -1,20 +1,13 @@
-
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchInvites, fetchPendingInvites, acceptInvite, rejectInvite, deleteInvite } from "@/services/inviteService";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { Loader2, Check, X, Trash2 } from "lucide-react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AppSidebar } from '@/components/AppSidebar';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import {
   Table,
   TableBody,
@@ -22,114 +15,119 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { TeamRule } from "@/types/invite";
+} from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from '@/hooks/use-toast';
+import {
+  acceptInvite,
+  deleteInvite,
+  fetchInvites,
+  fetchPendingInvites,
+  rejectInvite,
+} from '@/services/inviteService';
+import { TeamRule } from '@/types/invite';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Check, Loader2, Trash2, X } from 'lucide-react';
+import { useState } from 'react';
 
 const getTeamRuleName = (ruleId: number): string => {
   switch (ruleId) {
     case TeamRule.Viewer:
-      return "Viewer";
+      return 'Viewer';
     case TeamRule.Member:
-      return "Member";
+      return 'Member';
     case TeamRule.Leader:
-      return "Leader";
-    case TeamRule.Admin:
-      return "Admin";
+      return 'Leader';
     default:
-      return "Unknown";
+      return 'Unknown';
   }
 };
 
 const Invites = () => {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('all');
 
-  // Query to fetch all invites
   const { data: allInvites = [], isLoading: isLoadingAll } = useQuery({
-    queryKey: ["invites"],
+    queryKey: ['invites'],
     queryFn: fetchInvites,
     meta: {
       onError: () => {
         toast({
-          title: "Error",
-          description: "Failed to load invites",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load invites',
+          variant: 'destructive',
         });
-      }
-    }
+      },
+    },
   });
 
-  // Query to fetch pending invites
   const { data: pendingInvites = [], isLoading: isLoadingPending } = useQuery({
-    queryKey: ["pendingInvites"],
+    queryKey: ['pendingInvites'],
     queryFn: fetchPendingInvites,
     meta: {
       onError: () => {
         toast({
-          title: "Error",
-          description: "Failed to load pending invites",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load pending invites',
+          variant: 'destructive',
         });
-      }
-    }
+      },
+    },
   });
 
-  // Mutation to accept invite
   const acceptMutation = useMutation({
     mutationFn: (id: number) => acceptInvite(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["invites"] });
-      queryClient.invalidateQueries({ queryKey: ["pendingInvites"] });
+      queryClient.invalidateQueries({ queryKey: ['invites'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingInvites'] });
       toast({
-        title: "Success",
-        description: "Invite accepted successfully",
+        title: 'Success',
+        description: 'Invite accepted successfully',
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to accept invite",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to accept invite',
+        variant: 'destructive',
       });
     },
   });
 
-  // Mutation to reject invite
   const rejectMutation = useMutation({
     mutationFn: (id: number) => rejectInvite(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["invites"] });
-      queryClient.invalidateQueries({ queryKey: ["pendingInvites"] });
+      queryClient.invalidateQueries({ queryKey: ['invites'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingInvites'] });
       toast({
-        title: "Success",
-        description: "Invite rejected successfully",
+        title: 'Success',
+        description: 'Invite rejected successfully',
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to reject invite",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to reject invite',
+        variant: 'destructive',
       });
     },
   });
 
-  // Mutation to delete invite
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteInvite(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["invites"] });
-      queryClient.invalidateQueries({ queryKey: ["pendingInvites"] });
+      queryClient.invalidateQueries({ queryKey: ['invites'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingInvites'] });
       toast({
-        title: "Success",
-        description: "Invite deleted successfully",
+        title: 'Success',
+        description: 'Invite deleted successfully',
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to delete invite",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to delete invite',
+        variant: 'destructive',
       });
     },
   });
@@ -146,10 +144,12 @@ const Invites = () => {
     deleteMutation.mutate(id);
   };
 
-  const isLoading = isLoadingAll || isLoadingPending || 
-                   acceptMutation.isPending || 
-                   rejectMutation.isPending || 
-                   deleteMutation.isPending;
+  const isLoading =
+    isLoadingAll ||
+    isLoadingPending ||
+    acceptMutation.isPending ||
+    rejectMutation.isPending ||
+    deleteMutation.isPending;
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -158,22 +158,20 @@ const Invites = () => {
         <main className="flex-1 p-6">
           <Card>
             <CardHeader>
-              <CardTitle>Invites</CardTitle>
-              <CardDescription>
-                Manage team invitations
-              </CardDescription>
+              <CardTitle>Convites</CardTitle>
+              <CardDescription>Gerencie os convites do Time</CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs 
-                value={activeTab} 
+              <Tabs
+                value={activeTab}
                 onValueChange={setActiveTab}
                 className="w-full"
               >
                 <TabsList className="mb-6">
-                  <TabsTrigger value="all">All Invites</TabsTrigger>
-                  <TabsTrigger value="pending">Pending Invites</TabsTrigger>
+                  <TabsTrigger value="all">Todos</TabsTrigger>
+                  <TabsTrigger value="pending">Pendentes</TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent value="all" className="w-full">
                   {isLoadingAll ? (
                     <div className="flex justify-center py-8">
@@ -181,18 +179,17 @@ const Invites = () => {
                     </div>
                   ) : allInvites.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      No invites found.
+                      Não encontrado convites.
                     </div>
                   ) : (
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Team</TableHead>
-                          <TableHead>User</TableHead>
-                          <TableHead>Role</TableHead>
+                          <TableHead>Time</TableHead>
+                          <TableHead>Usuário</TableHead>
+                          <TableHead>Permissão</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Created At</TableHead>
-                          <TableHead>Actions</TableHead>
+                          <TableHead>Ações</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -200,13 +197,14 @@ const Invites = () => {
                           <TableRow key={invite.id}>
                             <TableCell>{invite.teamName}</TableCell>
                             <TableCell>{invite.userName}</TableCell>
-                            <TableCell>{getTeamRuleName(invite.teamRule)}</TableCell>
+                            <TableCell>
+                              {getTeamRuleName(invite.teamRule)}
+                            </TableCell>
                             <TableCell>{invite.status}</TableCell>
-                            <TableCell>{new Date(invite.createdAt).toLocaleString()}</TableCell>
                             <TableCell>
                               <div className="flex space-x-2">
-                                <Button 
-                                  variant="outline" 
+                                <Button
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => handleDelete(invite.id)}
                                   disabled={isLoading}
@@ -221,7 +219,7 @@ const Invites = () => {
                     </Table>
                   )}
                 </TabsContent>
-                
+
                 <TabsContent value="pending" className="w-full">
                   {isLoadingPending ? (
                     <div className="flex justify-center py-8">
@@ -229,17 +227,16 @@ const Invites = () => {
                     </div>
                   ) : pendingInvites.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      No pending invites found.
+                      Não encontrado convites pendentes.
                     </div>
                   ) : (
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Team</TableHead>
-                          <TableHead>User</TableHead>
-                          <TableHead>Role</TableHead>
-                          <TableHead>Created At</TableHead>
-                          <TableHead>Actions</TableHead>
+                          <TableHead>Time</TableHead>
+                          <TableHead>Usuário</TableHead>
+                          <TableHead>Permissão</TableHead>
+                          <TableHead>Ações</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -247,12 +244,13 @@ const Invites = () => {
                           <TableRow key={invite.id}>
                             <TableCell>{invite.teamName}</TableCell>
                             <TableCell>{invite.userName}</TableCell>
-                            <TableCell>{getTeamRuleName(invite.teamRule)}</TableCell>
-                            <TableCell>{new Date(invite.createdAt).toLocaleString()}</TableCell>
+                            <TableCell>
+                              {getTeamRuleName(invite.teamRule)}
+                            </TableCell>
                             <TableCell>
                               <div className="flex space-x-2">
-                                <Button 
-                                  variant="outline" 
+                                <Button
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => handleAccept(invite.id)}
                                   disabled={isLoading}
@@ -260,8 +258,8 @@ const Invites = () => {
                                 >
                                   <Check className="h-4 w-4 text-green-500" />
                                 </Button>
-                                <Button 
-                                  variant="outline" 
+                                <Button
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => handleReject(invite.id)}
                                   disabled={isLoading}

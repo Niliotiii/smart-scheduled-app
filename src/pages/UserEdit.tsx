@@ -148,18 +148,18 @@ const UserEdit = () => {
         <main className="flex-1 p-6">
           <Button 
             variant="ghost" 
-            onClick={() => navigate(`/users/${userId}`)} 
+            onClick={() => navigate(`/admin`)} 
             className="mb-4 flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to User Details
+            Voltar Para Usuários
           </Button>
           
           <Card>
             <CardHeader>
-              <CardTitle>Edit User</CardTitle>
+              <CardTitle>Editar Usuário</CardTitle>
               <CardDescription>
-                Update user information
+                Atualize as informações do usuário.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -171,7 +171,7 @@ const UserEdit = () => {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel>Nome Completo</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -213,7 +213,7 @@ const UserEdit = () => {
                       name="cellphone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Cellphone</FormLabel>
+                          <FormLabel>Telefone</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -227,7 +227,7 @@ const UserEdit = () => {
                       name="motherName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Mother's Name</FormLabel>
+                          <FormLabel>Nome da Mãe</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -241,7 +241,7 @@ const UserEdit = () => {
                       name="fatherName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Father's Name</FormLabel>
+                          <FormLabel>Nome do Pai</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -255,7 +255,7 @@ const UserEdit = () => {
                       name="motherCellphone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Mother's Cellphone</FormLabel>
+                          <FormLabel>Telefone da Mãe</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -269,7 +269,7 @@ const UserEdit = () => {
                       name="fatherCellphone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Father's Cellphone</FormLabel>
+                          <FormLabel>Telefone do Pai</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -280,14 +280,14 @@ const UserEdit = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Address Information</h3>
+                    <h3 className="text-lg font-medium">Informações de Endereço</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="street"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Street</FormLabel>
+                            <FormLabel>Rua</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -301,7 +301,7 @@ const UserEdit = () => {
                         name="city"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>City</FormLabel>
+                            <FormLabel>Cidade</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -315,7 +315,7 @@ const UserEdit = () => {
                         name="state"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>State</FormLabel>
+                            <FormLabel>Estado</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -329,7 +329,7 @@ const UserEdit = () => {
                         name="postalCode"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Postal Code</FormLabel>
+                            <FormLabel>CEP</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -343,7 +343,7 @@ const UserEdit = () => {
                         name="country"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Country</FormLabel>
+                            <FormLabel>País</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -357,7 +357,7 @@ const UserEdit = () => {
                   <div className="flex justify-end">
                     <Button type="submit" className="flex gap-2 items-center">
                       <Save className="h-4 w-4" />
-                      Save Changes
+                      Atualizar Usuário
                     </Button>
                   </div>
                 </form>

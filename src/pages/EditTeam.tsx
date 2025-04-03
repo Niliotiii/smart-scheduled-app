@@ -1,15 +1,5 @@
-
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchTeamById, updateTeam } from "@/services/teamService";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft } from "lucide-react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar } from '@/components/AppSidebar';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -17,7 +7,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/hooks/use-toast';
+import { fetchTeamById, updateTeam } from '@/services/teamService';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 type TeamFormData = {
   name: string;
@@ -28,16 +27,17 @@ const EditTeam = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const teamId = id ? parseInt(id) : 0;
-  const [formData, setFormData] = useState<TeamFormData>({ name: "", description: "" });
+  const [formData, setFormData] = useState<TeamFormData>({
+    name: '',
+    description: '',
+  });
 
-  // Query to fetch team details
   const { data: team, isLoading } = useQuery({
     queryKey: ['team', teamId],
     queryFn: () => fetchTeamById(teamId),
     enabled: !!teamId,
   });
 
-  // Set form data when team data is loaded
   useEffect(() => {
     if (team) {
       setFormData({
@@ -47,26 +47,29 @@ const EditTeam = () => {
     }
   }, [team]);
 
-  // Mutation to update team
   const updateTeamMutation = useMutation({
     mutationFn: (data: TeamFormData) => updateTeam(teamId, data),
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Team updated successfully",
+        title: 'Success',
+        description: 'Team updated successfully',
       });
-      navigate("/teams");
+      navigate('/teams');
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: `Failed to update team: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
+        title: 'Error',
+        description: `Failed to update team: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+        variant: 'destructive',
       });
     },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -94,26 +97,28 @@ const EditTeam = () => {
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1 p-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/teams")} 
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/teams')}
             className="mb-4 flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Teams
+            Voltar Para Times
           </Button>
-          
+
           <Card>
             <CardHeader>
-              <CardTitle>Edit Team</CardTitle>
+              <CardTitle>Editar Time</CardTitle>
               <CardDescription>
-                Make changes to the team details
+                Atualize as informações do time conforme necessário.
               </CardDescription>
             </CardHeader>
             <form onSubmit={handleUpdateTeam}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">Team Name</label>
+                  <label htmlFor="name" className="text-sm font-medium">
+                    Nome
+                  </label>
                   <Input
                     id="name"
                     name="name"
@@ -124,7 +129,9 @@ const EditTeam = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="description" className="text-sm font-medium">Description</label>
+                  <label htmlFor="description" className="text-sm font-medium">
+                    Descrição
+                  </label>
                   <Textarea
                     id="description"
                     name="description"
@@ -136,21 +143,18 @@ const EditTeam = () => {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end space-x-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => navigate("/teams")}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/teams')}
                 >
-                  Cancel
+                  Cancelar
                 </Button>
-                <Button 
-                  type="submit" 
-                  disabled={updateTeamMutation.isPending}
-                >
+                <Button type="submit" disabled={updateTeamMutation.isPending}>
                   {updateTeamMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Save Changes
+                  Atualizar Time
                 </Button>
               </CardFooter>
             </form>

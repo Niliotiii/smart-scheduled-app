@@ -98,18 +98,18 @@ const UserCreate = () => {
         <main className="flex-1 p-6">
           <Button 
             variant="ghost" 
-            onClick={() => navigate("/users")} 
+            onClick={() => navigate("/admin")} 
             className="mb-4 flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Users
+            Voltar Para Usuários
           </Button>
           
           <Card>
             <CardHeader>
-              <CardTitle>Create New User</CardTitle>
+              <CardTitle>Criar Novo Usuário</CardTitle>
               <CardDescription>
-                Add a new user to the system
+                Adicionar um novo usuário ao sistema.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -121,7 +121,7 @@ const UserCreate = () => {
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel>Nome de Usuário</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -135,7 +135,7 @@ const UserCreate = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel>Senha</FormLabel>
                           <FormControl>
                             <Input {...field} type="password" />
                           </FormControl>
@@ -149,7 +149,7 @@ const UserCreate = () => {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel>Nome Completo</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -191,7 +191,7 @@ const UserCreate = () => {
                       name="cellphone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Cellphone</FormLabel>
+                          <FormLabel>Telefone</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -202,14 +202,14 @@ const UserCreate = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Additional Information</h3>
+                    <h3 className="text-lg font-medium">Informações Adicionais</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="motherName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Mother's Name</FormLabel>
+                            <FormLabel>Nome da Mãe</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -223,7 +223,7 @@ const UserCreate = () => {
                         name="fatherName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Father's Name</FormLabel>
+                            <FormLabel>Nome do Pai</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -237,7 +237,7 @@ const UserCreate = () => {
                         name="motherCellphone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Mother's Cellphone</FormLabel>
+                            <FormLabel>Telefone da Mãe</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -251,7 +251,7 @@ const UserCreate = () => {
                         name="fatherCellphone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Father's Cellphone</FormLabel>
+                            <FormLabel>Telefone do Pai</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -263,14 +263,14 @@ const UserCreate = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Address Information</h3>
+                    <h3 className="text-lg font-medium">Informações de Endereço</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="street"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Street</FormLabel>
+                            <FormLabel>Rua</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -284,7 +284,7 @@ const UserCreate = () => {
                         name="city"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>City</FormLabel>
+                            <FormLabel>Cidade</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -298,7 +298,7 @@ const UserCreate = () => {
                         name="state"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>State</FormLabel>
+                            <FormLabel>Estado</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -312,7 +312,7 @@ const UserCreate = () => {
                         name="postalCode"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Postal Code</FormLabel>
+                            <FormLabel>CEP</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -326,7 +326,7 @@ const UserCreate = () => {
                         name="country"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Country</FormLabel>
+                            <FormLabel>País</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -340,7 +340,7 @@ const UserCreate = () => {
                   <div className="flex justify-end">
                     <Button type="submit" className="flex gap-2 items-center">
                       <Save className="h-4 w-4" />
-                      Create User
+                      Criar Usuário
                     </Button>
                   </div>
                 </form>

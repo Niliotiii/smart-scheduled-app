@@ -1,14 +1,5 @@
-
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchAssignmentById, updateAssignment } from "@/services/assignmentService";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { toast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft } from "lucide-react";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar } from '@/components/AppSidebar';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -16,9 +7,20 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useAuth } from "@/contexts/AuthContext";
-import { AssignmentUpdateRequest } from "@/types/assignment";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
+import {
+  fetchAssignmentById,
+  updateAssignment,
+} from '@/services/assignmentService';
+import { AssignmentUpdateRequest } from '@/types/assignment';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const AssignmentEdit = () => {
   const navigate = useNavigate();
@@ -26,10 +28,9 @@ const AssignmentEdit = () => {
   const assignmentId = id ? parseInt(id) : 0;
   const { selectedTeam } = useAuth();
   const teamId = selectedTeam?.id || 0;
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
-  // Query to fetch assignment details - fixed function name from fetchAssignment to fetchAssignmentById
   const { data: assignment, isLoading } = useQuery({
     queryKey: ['assignment', teamId, assignmentId],
     queryFn: () => fetchAssignmentById(teamId, assignmentId),
@@ -38,48 +39,49 @@ const AssignmentEdit = () => {
 
   useEffect(() => {
     if (assignment) {
-      setTitle(assignment.title || "");
-      setDescription(assignment.description || "");
+      setTitle(assignment.title || '');
+      setDescription(assignment.description || '');
     }
   }, [assignment]);
 
-  // Mutation to update assignment
   const updateAssignmentMutation = useMutation({
-    mutationFn: (data: AssignmentUpdateRequest) => updateAssignment(teamId, assignmentId, data),
+    mutationFn: (data: AssignmentUpdateRequest) =>
+      updateAssignment(teamId, assignmentId, data),
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Assignment updated successfully",
+        title: 'Success',
+        description: 'Assignment updated successfully',
       });
       navigate(`/assignments/${assignmentId}`);
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: `Failed to update assignment: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
+        title: 'Error',
+        description: `Failed to update assignment: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+        variant: 'destructive',
       });
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Ensure title is not empty as it's required
+
     if (!title.trim()) {
       toast({
-        title: "Error",
-        description: "Title is required",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Title is required',
+        variant: 'destructive',
       });
       return;
     }
-    
+
     const assignmentData: AssignmentUpdateRequest = {
       title: title,
-      description: description
+      description: description,
     };
-    
+
     updateAssignmentMutation.mutate(assignmentData);
   };
 
@@ -98,26 +100,28 @@ const AssignmentEdit = () => {
     <div className="flex min-h-screen w-full">
       <AppSidebar />
       <main className="flex-1 p-6">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate(`/assignments/${assignmentId}`)} 
+        <Button
+          variant="ghost"
+          onClick={() => navigate(`/assignments/${assignmentId}`)}
           className="mb-4 flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Assignment
+          Voltar Para Funções
         </Button>
-        
+
         <Card>
           <CardHeader>
-            <CardTitle>Edit Assignment</CardTitle>
+            <CardTitle>Editar Função</CardTitle>
             <CardDescription>
-              Update the assignment details
+              Atualize as informações da função conforme necessário.
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">Title</label>
+                <label htmlFor="title" className="text-sm font-medium">
+                  Título
+                </label>
                 <Input
                   id="title"
                   value={title}
@@ -127,7 +131,9 @@ const AssignmentEdit = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium">Description</label>
+                <label htmlFor="description" className="text-sm font-medium">
+                  Descrição
+                </label>
                 <Textarea
                   id="description"
                   value={description}
@@ -138,21 +144,21 @@ const AssignmentEdit = () => {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end space-x-2">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => navigate(`/assignments/${assignmentId}`)}
               >
-                Cancel
+                Cancelar
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={updateAssignmentMutation.isPending}
               >
                 {updateAssignmentMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Update Assignment
+                Atualizar Função
               </Button>
             </CardFooter>
           </form>

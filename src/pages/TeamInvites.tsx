@@ -162,14 +162,14 @@ const TeamInvites = () => {
             className="mb-4 flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Team Members
+            Voltar Para Membros
           </Button>
           
           <Card>
             <CardHeader>
-              <CardTitle>Team Invites - {team?.name}</CardTitle>
+              <CardTitle>Convites do Time - {team?.name}</CardTitle>
               <CardDescription>
-                Manage invitations for this team
+                Gerencie os convites do time
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -179,24 +179,23 @@ const TeamInvites = () => {
                 className="w-full"
               >
                 <TabsList className="mb-6">
-                  <TabsTrigger value="invites">Current Invites</TabsTrigger>
-                  <TabsTrigger value="send">Send Invite</TabsTrigger>
+                  <TabsTrigger value="invites">Convites Atuais</TabsTrigger>
+                  <TabsTrigger value="send">Enviar Convite</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="invites" className="w-full">
                   {invites.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      No pending invites for this team.
+                      Nenhum convite no time.
                     </div>
                   ) : (
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>User</TableHead>
-                          <TableHead>Role</TableHead>
+                          <TableHead>Usuário</TableHead>
+                          <TableHead>Permissão</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Created At</TableHead>
-                          <TableHead>Actions</TableHead>
+                          <TableHead>Ações</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -234,7 +233,7 @@ const TeamInvites = () => {
                 <TabsContent value="send" className="w-full">
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Select User</label>
+                      <label className="text-sm font-medium">Selecionar o usuário</label>
                       <Select
                         value={selectedUserId}
                         onValueChange={setSelectedUserId}
@@ -256,7 +255,7 @@ const TeamInvites = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Role</label>
+                      <label className="text-sm font-medium">Permissão</label>
                       <Select
                         value={selectedRole}
                         onValueChange={setSelectedRole}
@@ -268,7 +267,6 @@ const TeamInvites = () => {
                           <SelectItem value={TeamRule.Viewer.toString()}>Viewer</SelectItem>
                           <SelectItem value={TeamRule.Member.toString()}>Member</SelectItem>
                           <SelectItem value={TeamRule.Leader.toString()}>Leader</SelectItem>
-                          <SelectItem value={TeamRule.Admin.toString()}>Admin</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -284,7 +282,7 @@ const TeamInvites = () => {
                         ) : (
                           <UserPlus className="h-4 w-4" />
                         )}
-                        Send Invite
+                        Enviar Convite
                       </Button>
                     </div>
                   </div>
