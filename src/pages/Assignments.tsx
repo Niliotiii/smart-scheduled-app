@@ -47,7 +47,7 @@ const Assignments = () => {
       case 1:
         return <Badge variant="secondary">In Progress</Badge>;
       case 2:
-        return <Badge variant="success" className="bg-green-500 text-white">Completed</Badge>;
+        return <Badge className="bg-green-500 text-white">Completed</Badge>;
       default:
         return <Badge variant="outline">Unknown</Badge>;
     }

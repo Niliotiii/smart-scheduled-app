@@ -8,7 +8,7 @@ interface AuthContextType {
   user: any | null;
   selectedTeam: Team | null;
   token: string | null;
-  userTeamRule?: number;  // Added userTeamRule property
+  userTeamRule?: number;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   selectTeam: (team: Team) => void;
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   selectedTeam: null,
   token: null,
-  userTeamRule: undefined, // Default value for userTeamRule
+  userTeamRule: undefined,
   login: async () => {},
   logout: () => {},
   selectTeam: () => {},
@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userTeamRule, setUserTeamRule] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    // Verificar se há um token salvo no localStorage ao carregar a página
+    // Check for saved token in localStorage
     const storedToken = localStorage.getItem("authToken");
     const userData = localStorage.getItem("userData");
     const teamData = localStorage.getItem("selectedTeam");
@@ -66,15 +66,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const response = await loginUser(username, password);
     
     if (!response.success) {
-      throw new Error(response.error || "Falha na autenticação");
+      throw new Error(response.error || "Authentication failed");
     }
     
-    // Aqui você pode decodificar o token JWT, se necessário
     const mockUser = { username, id: 1, role: "user" };
     const actualToken = response.access_token || response.token;
     
     if (!actualToken) {
-      throw new Error("Token não encontrado na resposta");
+      throw new Error("Token not found in response");
     }
     
     localStorage.setItem("authToken", actualToken);
