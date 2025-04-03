@@ -28,6 +28,10 @@ import AssignmentView from "./pages/AssignmentView";
 import AssignmentCreate from "./pages/AssignmentCreate";
 import AssignmentEdit from "./pages/AssignmentEdit";
 import Assign from "./pages/Assign";
+import Schedules from "./pages/Schedules";
+import ScheduleCreate from "./pages/ScheduleCreate";
+import ScheduleEdit from "./pages/ScheduleEdit";
+import ScheduleView from "./pages/ScheduleView";
 
 const queryClient = new QueryClient();
 
@@ -205,7 +209,31 @@ const App = () => (
               path="/schedules" 
               element={
                 <ProtectedContent requireTeam={true}>
-                  <Index />
+                  <Schedules />
+                </ProtectedContent>
+              } 
+            />
+            <Route 
+              path="/schedules/create" 
+              element={
+                <ProtectedContent requireTeam={true}>
+                  <ScheduleCreate />
+                </ProtectedContent>
+              } 
+            />
+            <Route 
+              path="/schedules/:id" 
+              element={
+                <ProtectedContent requireTeam={true}>
+                  <ScheduleView />
+                </ProtectedContent>
+              } 
+            />
+            <Route 
+              path="/schedules/:id/edit" 
+              element={
+                <ProtectedContent requireTeam={true}>
+                  <ScheduleEdit />
                 </ProtectedContent>
               } 
             />

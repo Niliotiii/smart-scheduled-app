@@ -18,6 +18,8 @@ export const fetchSchedules = async (teamId: number): Promise<Schedule[]> => {
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Failed to fetch schedules:", errorText);
     throw new Error("Failed to fetch schedules");
   }
 
@@ -35,6 +37,8 @@ export const fetchScheduleById = async (teamId: number, id: number): Promise<Sch
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Failed to fetch schedule with ID ${id}:`, errorText);
     throw new Error("Failed to fetch schedule");
   }
 
@@ -54,6 +58,8 @@ export const createSchedule = async (teamId: number, schedule: ScheduleCreateReq
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Failed to create schedule:", errorText);
     throw new Error("Failed to create schedule");
   }
 
@@ -73,6 +79,8 @@ export const updateSchedule = async (teamId: number, id: number, schedule: Sched
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Failed to update schedule with ID ${id}:`, errorText);
     throw new Error("Failed to update schedule");
   }
 
@@ -91,6 +99,8 @@ export const deleteSchedule = async (teamId: number, id: number): Promise<void> 
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Failed to delete schedule with ID ${id}:`, errorText);
     throw new Error("Failed to delete schedule");
   }
 };

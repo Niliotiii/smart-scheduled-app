@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
@@ -59,18 +59,22 @@ const ScheduleView = () => {
   });
 
   // Fetch team members
-  const { data: members, isLoading: isLoadingMembers } = useQuery({
+  const { data: members } = useQuery({
     queryKey: ['teamMembers', teamId],
     queryFn: () => fetchTeamMembers(teamId),
     enabled: !!teamId,
-    onSuccess: (data) => {
+  });
+
+  // Update membersData when members are loaded
+  useEffect(() => {
+    if (members) {
       const membersMap = {};
-      data.forEach(member => {
+      members.forEach(member => {
         membersMap[member.id] = member;
       });
       setMembersData(membersMap);
     }
-  });
+  }, [members]);
 
   // Fetch assignments for this schedule
   const { 
@@ -81,11 +85,15 @@ const ScheduleView = () => {
     queryKey: ['assignedTasks', scheduleId],
     queryFn: () => fetchAssignedByScheduleId(scheduleId),
     enabled: !!scheduleId,
-    onSuccess: async (data) => {
-      // For each assigned task, fetch the assignment details
-      const assignments = {};
+  });
+
+  // Fetch assignment details when assigned tasks are loaded
+  useEffect(() => {
+    const fetchAssignmentDetails = async () => {
+      if (!assignedTasks || !teamId) return;
       
-      for (const task of data) {
+      const assignments = {};
+      for (const task of assignedTasks) {
         try {
           const assignment = await fetchAssignmentById(teamId, task.assignmentId);
           assignments[task.assignmentId] = assignment;
@@ -95,8 +103,10 @@ const ScheduleView = () => {
       }
       
       setAssignmentsData(assignments);
-    }
-  });
+    };
+
+    fetchAssignmentDetails();
+  }, [assignedTasks, teamId]);
 
   // Delete schedule mutation
   const deleteScheduleMutation = useMutation({
@@ -134,7 +144,7 @@ const ScheduleView = () => {
     return new Date(dateString).toLocaleString();
   };
 
-  const isLoading = isLoadingSchedule || isLoadingAssigned || isLoadingMembers;
+  const isLoading = isLoadingSchedule || isLoadingAssigned;
 
   if (!teamId) {
     return <div className="p-8">No team selected. Please select a team first.</div>;
