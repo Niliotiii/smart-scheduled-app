@@ -8,7 +8,6 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2, Plus, User } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import MainNavbar from "@/components/MainNavbar";
 import {
   Card,
   CardContent,
@@ -126,7 +125,6 @@ const Users: React.FC<UsersProps> = ({ isEmbedded = false }) => {
       <div className="flex min-h-screen w-full flex-col">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
-          <MainNavbar />
           <main className="flex-1 p-6">
             <Card>
               <CardHeader>

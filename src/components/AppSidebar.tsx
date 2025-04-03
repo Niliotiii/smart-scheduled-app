@@ -44,6 +44,10 @@ export function AppSidebar() {
     navigate("/team-selection");
   };
 
+  const handleSettingsAdmin = () => {
+    navigate("/admin");
+  };
+
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
@@ -123,6 +127,14 @@ export function AppSidebar() {
               Admin Panel
             </Button>
           )}
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-2"
+            onClick={handleSettingsAdmin}
+          >
+            <Users className="h-4 w-4" />
+            Settings Admin
+          </Button>
           <Button
             variant="outline"
             className="w-full justify-start gap-2"

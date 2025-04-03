@@ -3,7 +3,6 @@ import React from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Calendar, Users, ClipboardList } from "lucide-react";
-import MainNavbar from "@/components/MainNavbar";
 import {
   Card,
   CardContent,
@@ -22,7 +21,6 @@ const Index = () => {
       <div className="flex min-h-screen w-full flex-col">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
-          <MainNavbar />
           <main className="flex-1 p-6">
             <div className="mb-8">
               <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>

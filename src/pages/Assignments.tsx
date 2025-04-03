@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { fetchAssignments } from "@/services/assignmentService";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import MainNavbar from "@/components/MainNavbar";
 import {
   Table,
   TableBody,
@@ -58,7 +57,6 @@ const Assignments = () => {
         <div className="flex min-h-screen w-full flex-col">
           <AppSidebar />
           <div className="flex flex-1 flex-col">
-            <MainNavbar />
             <main className="flex-1 p-6">
               <div className="mb-6 flex items-center justify-between">
                 <div>
@@ -91,7 +89,6 @@ const Assignments = () => {
         <div className="flex min-h-screen w-full flex-col">
           <AppSidebar />
           <div className="flex flex-1 flex-col">
-            <MainNavbar />
             <main className="flex-1 p-6">
               <div className="mb-6 flex items-center justify-between">
                 <div>
@@ -121,7 +118,6 @@ const Assignments = () => {
       <div className="flex min-h-screen w-full flex-col">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
-          <MainNavbar />
           <main className="flex-1 p-6">
             <div className="mb-6 flex items-center justify-between">
               <div>

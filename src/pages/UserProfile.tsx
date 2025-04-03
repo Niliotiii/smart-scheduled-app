@@ -3,7 +3,6 @@ import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import MainNavbar from "@/components/MainNavbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,7 +25,6 @@ const UserProfile = () => {
       <div className="flex min-h-screen w-full flex-col">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
-          <MainNavbar />
           <main className="flex-1 p-6">
             <Card>
               <CardHeader>
