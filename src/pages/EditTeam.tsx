@@ -1,7 +1,6 @@
 import { AppSidebar } from '@/components/AppSidebar';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
@@ -106,59 +105,57 @@ const EditTeam = () => {
             Voltar Para Times
           </Button>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Editar Time</CardTitle>
-              <CardDescription>
-                Atualize as informações do time conforme necessário.
-              </CardDescription>
-            </CardHeader>
-            <form onSubmit={handleUpdateTeam}>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">
-                    Nome
-                  </label>
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="Enter team name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="description" className="text-sm font-medium">
-                    Descrição
-                  </label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    placeholder="Enter team description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-end space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate('/teams')}
-                >
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={updateTeamMutation.isPending}>
-                  {updateTeamMutation.isPending && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Atualizar Time
-                </Button>
-              </CardFooter>
-            </form>
-          </Card>
+          <CardHeader>
+            <CardTitle>Editar Time</CardTitle>
+            <CardDescription>
+              Atualize as informações do time conforme necessário.
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleUpdateTeam}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium">
+                  Nome
+                </label>
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="Enter team name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium">
+                  Descrição
+                </label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  placeholder="Enter team description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/teams')}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={updateTeamMutation.isPending}>
+                {updateTeamMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Atualizar Time
+              </Button>
+            </CardFooter>
+          </form>
         </main>
       </div>
     </SidebarProvider>

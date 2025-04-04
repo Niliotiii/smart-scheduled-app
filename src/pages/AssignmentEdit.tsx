@@ -1,7 +1,6 @@
 import { AppSidebar } from '@/components/AppSidebar';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
@@ -102,67 +101,62 @@ const AssignmentEdit = () => {
       <main className="flex-1 p-6">
         <Button
           variant="ghost"
-          onClick={() => navigate(`/assignments/${assignmentId}`)}
+          onClick={() => navigate(`/assignments`)}
           className="mb-4 flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar Para Funções
         </Button>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Editar Função</CardTitle>
-            <CardDescription>
-              Atualize as informações da função conforme necessário.
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">
-                  Título
-                </label>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter assignment title"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium">
-                  Descrição
-                </label>
-                <Textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Enter assignment description"
-                  rows={5}
-                />
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate(`/assignments/${assignmentId}`)}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={updateAssignmentMutation.isPending}
-              >
-                {updateAssignmentMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Atualizar Função
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
+        <CardHeader>
+          <CardTitle>Editar Função</CardTitle>
+          <CardDescription>
+            Atualize as informações da função conforme necessário.
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="title" className="text-sm font-medium">
+                Título
+              </label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter assignment title"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-medium">
+                Descrição
+              </label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter assignment description"
+                rows={5}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(`/assignments/${assignmentId}`)}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={updateAssignmentMutation.isPending}>
+              {updateAssignmentMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Atualizar Função
+            </Button>
+          </CardFooter>
+        </form>
       </main>
     </div>
   );

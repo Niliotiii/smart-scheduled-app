@@ -1,10 +1,10 @@
 import { AppSidebar } from '@/components/AppSidebar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchAssignmentById } from '@/services/assignmentService';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Edit } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const AssignmentView = () => {
@@ -52,33 +52,46 @@ const AssignmentView = () => {
           Voltar Para Funções
         </Button>
 
-        <Card>
-          <div className="flex-1 p-8">
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold">Detalhes da Função</h1>
-              </div>
-              <Button
-                onClick={() => navigate(`/assignments/${assignmentId}/edit`)}
-              >
-                <Edit className="mr-2 h-4 w-4" /> Editar Função
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-              <Card className="lg:col-span-3">
-                <CardHeader>
-                  <CardTitle>{assignment.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="whitespace-pre-wrap">
-                    {assignment.description}
-                  </p>
-                </CardContent>
-              </Card>
+        <div className="flex-1 p-8">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold">Detalhes da Função</h1>
             </div>
           </div>
-        </Card>
+
+          <CardHeader className="space-y-1">
+            <div className="flex items-center justify-between">
+              <CardTitle>{assignment.title}</CardTitle>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Time: {assignment.teamName}
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="font-medium mb-2">Descrição</h3>
+              <p className="whitespace-pre-wrap text-muted-foreground">
+                {assignment.description}
+              </p>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div>
+                <span>Criado em: </span>
+                <time dateTime={assignment.createdAt}>
+                  {new Date(assignment.createdAt).toLocaleDateString()}
+                </time>
+              </div>
+              {assignment.updatedAt && (
+                <div>
+                  <span>Atualizado em: </span>
+                  <time dateTime={assignment.updatedAt}>
+                    {new Date(assignment.updatedAt).toLocaleDateString()}
+                  </time>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </div>
       </main>
     </div>
   );

@@ -12,7 +12,6 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchSchedules } from '@/services/scheduleService';
 import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
 import { Calendar, Edit, Eye, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -102,8 +101,12 @@ const SchedulesList = () => {
           <TableRow key={schedule.id}>
             <TableCell className="font-medium">{schedule.title}</TableCell>
             <TableCell>{schedule.description}</TableCell>
-            <TableCell>{format(new Date(schedule.startDate), 'PPP')}</TableCell>
-            <TableCell>{format(new Date(schedule.endDate), 'PPP')}</TableCell>
+            <TableCell>
+              {new Date(schedule.startDate).toLocaleDateString()}
+            </TableCell>
+            <TableCell>
+              {new Date(schedule.endDate).toLocaleDateString()}
+            </TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end space-x-2">
                 <ActionButton

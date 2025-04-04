@@ -1,7 +1,6 @@
 import { AppSidebar } from '@/components/AppSidebar';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
@@ -98,83 +97,81 @@ const ScheduleCreate = () => {
           Voltar Para Escalas
         </Button>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Criar Escala</CardTitle>
-            <CardDescription>
-              Adicione uma nova escala ao seu time
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
+        <CardHeader>
+          <CardTitle>Criar Escala</CardTitle>
+          <CardDescription>
+            Adicione uma nova escala ao seu time
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="title" className="text-sm font-medium">
+                Título
+              </label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter schedule title"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-medium">
+                Descrição
+              </label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter schedule description"
+                rows={3}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">
-                  Título
+                <label htmlFor="startDate" className="text-sm font-medium">
+                  Data Inicial
                 </label>
                 <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter schedule title"
+                  id="startDate"
+                  type="datetime-local"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium">
-                  Descrição
+                <label htmlFor="endDate" className="text-sm font-medium">
+                  Data Final
                 </label>
-                <Textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Enter schedule description"
-                  rows={3}
+                <Input
+                  id="endDate"
+                  type="datetime-local"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  required
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="startDate" className="text-sm font-medium">
-                    Data Inicial
-                  </label>
-                  <Input
-                    id="startDate"
-                    type="datetime-local"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="endDate" className="text-sm font-medium">
-                    Data Final
-                  </label>
-                  <Input
-                    id="endDate"
-                    type="datetime-local"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/schedules')}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={createScheduleMutation.isPending}>
-                {createScheduleMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Criar Escala
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate('/schedules')}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={createScheduleMutation.isPending}>
+              {createScheduleMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Criar Escala
+            </Button>
+          </CardFooter>
+        </form>
       </main>
     </div>
   );
