@@ -1,5 +1,6 @@
 import { loginUser } from '@/services/authService';
 import { Team } from '@/types/team';
+import { UserData } from '@/types/user';
 import React, {
   createContext,
   ReactNode,
@@ -13,7 +14,6 @@ interface AuthContextType {
   user: any | null;
   selectedTeam: Team | null;
   token: string | null;
-  userTeamRule?: number;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   selectTeam: (team: Team) => void;
@@ -25,7 +25,6 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   selectedTeam: null,
   token: null,
-  userTeamRule: undefined,
   login: async () => {},
   logout: () => {},
   selectTeam: () => {},
@@ -39,24 +38,18 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<any | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [userTeamRule, setUserTeamRule] = useState<number | undefined>(
-    undefined
-  );
+  const [user, setUser] = useState<UserData | null>(null);
 
   useEffect(() => {
-    // Check for saved token in localStorage
     const storedToken = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
     const teamData = localStorage.getItem('selectedTeam');
-    const ruleData = localStorage.getItem('userTeamRule');
+    const userData = localStorage.getItem('userData');
 
-    if (storedToken && userData) {
+    if (storedToken) {
       setToken(storedToken);
-      setUser(JSON.parse(userData));
       setIsAuthenticated(true);
     }
 
@@ -64,10 +57,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setSelectedTeam(JSON.parse(teamData));
     }
 
-    if (ruleData) {
-      setUserTeamRule(Number(ruleData));
+    if (userData) {
+      setUser(JSON.parse(userData));
     }
   }, []);
+
+  const fetchUserData = async (token: string) => {
+    try {
+      const response = await fetch('http://localhost:5199/api/User/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          accept: '*/*',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+
+      const result = await response.json();
+      const userData = result.data;
+
+      localStorage.setItem('userData', JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      throw error;
+    }
+  };
 
   const login = async (username: string, password: string) => {
     const response = await loginUser(username, password);
@@ -82,52 +99,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw new Error('Token not found in response');
     }
 
-    // Clear any existing data
     localStorage.removeItem('selectedTeam');
-    localStorage.removeItem('userTeamRule');
-
-    // Set new auth data
     localStorage.setItem('authToken', actualToken);
-    localStorage.setItem(
-      'userData',
-      JSON.stringify({ username, id: 1, role: 'user' })
-    );
-
     setToken(actualToken);
-    setUser({ username, id: 1, role: 'user' });
     setIsAuthenticated(true);
     setSelectedTeam(null);
-    setUserTeamRule(undefined);
+
+    await fetchUserData(actualToken);
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
     localStorage.removeItem('selectedTeam');
-    localStorage.removeItem('userTeamRule');
     setToken(null);
-    setUser(null);
     setIsAuthenticated(false);
     setSelectedTeam(null);
-    setUserTeamRule(undefined);
+    setUser(null);
   };
 
   const selectTeam = (team: Team) => {
     localStorage.setItem('selectedTeam', JSON.stringify(team));
     setSelectedTeam(team);
-
-    // For demo purposes, set a default userTeamRule when selecting a team
-    // In a real app, this would come from API call based on user's role in the team
-    const mockUserTeamRule = team.id % 4; // Just a simple way to create different roles for testing
-    localStorage.setItem('userTeamRule', mockUserTeamRule.toString());
-    setUserTeamRule(mockUserTeamRule);
   };
 
   const clearTeamSelection = () => {
     localStorage.removeItem('selectedTeam');
-    localStorage.removeItem('userTeamRule');
     setSelectedTeam(null);
-    setUserTeamRule(undefined);
   };
 
   return (
@@ -137,7 +135,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         user,
         selectedTeam,
         token,
-        userTeamRule,
         login,
         logout,
         selectTeam,

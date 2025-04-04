@@ -33,8 +33,8 @@ const getTeamRuleName = (ruleId: number): string => {
   switch (ruleId) {
     case TeamRule.Viewer:
       return 'Viewer';
-    case TeamRule.Member:
-      return 'Member';
+    case TeamRule.Editor:
+      return 'Editor';
     case TeamRule.Leader:
       return 'Leader';
     default:

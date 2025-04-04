@@ -32,11 +32,16 @@ import {
 import { fetchTeamById } from '@/services/teamService';
 import { fetchUsers } from '@/services/userService';
 import { TeamRule } from '@/types/invite';
-import { User } from '@/types/user';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Loader2, Trash2, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+interface CreateInvitePayload {
+  teamId: number;
+  userEmail: string;
+  teamRule: number;
+}
 
 const TeamInvites = () => {
   const navigate = useNavigate();
@@ -44,11 +49,21 @@ const TeamInvites = () => {
   const teamId = id ? parseInt(id) : 0;
   const queryClient = useQueryClient();
 
-  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [selectedUserEmail, setSelectedUserEmail] = useState<string>('');
   const [selectedRole, setSelectedRole] = useState<string>(
     TeamRule.Viewer.toString()
   );
   const [activeTab, setActiveTab] = useState('invites');
+
+  // Add this helper function at the top of the component
+  const getTeamRuleLabel = (rule: number): string => {
+    const teamRuleLabels: Record<number, string> = {
+      [TeamRule.Viewer]: 'Viewer',
+      [TeamRule.Editor]: 'Editor',
+      [TeamRule.Leader]: 'Leader',
+    };
+    return teamRuleLabels[rule] || 'Unknown';
+  };
 
   // Query to fetch team details
   const { data: team, isLoading: isLoadingTeam } = useQuery({
@@ -84,12 +99,12 @@ const TeamInvites = () => {
     mutationFn: () =>
       createInvite({
         teamId,
-        userId: parseInt(selectedUserId),
+        userEmail: selectedUserEmail,
         teamRule: parseInt(selectedRole),
-      }),
+      } as CreateInvitePayload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teamInvites'] });
-      setSelectedUserId('');
+      setSelectedUserEmail('');
       toast({
         title: 'Success',
         description: 'Invite sent successfully',
@@ -124,10 +139,19 @@ const TeamInvites = () => {
   });
 
   const handleCreateInvite = () => {
-    if (!selectedUserId) {
+    if (!selectedUserEmail) {
       toast({
         title: 'Error',
-        description: 'Please select a user',
+        description: 'Please enter a user email',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!selectedUserEmail.includes('@')) {
+      toast({
+        title: 'Error',
+        description: 'Please enter a valid email address',
         variant: 'destructive',
       });
       return;
@@ -205,13 +229,7 @@ const TeamInvites = () => {
                         <TableRow key={invite.id}>
                           <TableCell>{invite.userName}</TableCell>
                           <TableCell>
-                            {invite.teamRule === TeamRule.Viewer
-                              ? 'Viewer'
-                              : invite.teamRule === TeamRule.Member
-                              ? 'Member'
-                              : invite.teamRule === TeamRule.Leader
-                              ? 'Leader'
-                              : 'Admin'}
+                            {getTeamRuleLabel(invite.teamRule)}
                           </TableCell>
                           <TableCell>{invite.status}</TableCell>
                           <TableCell>
@@ -242,26 +260,15 @@ const TeamInvites = () => {
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">
-                      Selecionar o usuário
+                      Email do usuário
                     </label>
-                    <Select
-                      value={selectedUserId}
-                      onValueChange={setSelectedUserId}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a user" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {users.map((user: User) => (
-                          <SelectItem
-                            key={user.id}
-                            value={user.id.toString() || `user-${user.email}`}
-                          >
-                            {user.name} ({user.email})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <input
+                      type="email"
+                      className="w-full px-3 py-2 border rounded-md"
+                      value={selectedUserEmail}
+                      onChange={(e) => setSelectedUserEmail(e.target.value)}
+                      placeholder="Digite o email do usuário"
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -277,8 +284,8 @@ const TeamInvites = () => {
                         <SelectItem value={TeamRule.Viewer.toString()}>
                           Viewer
                         </SelectItem>
-                        <SelectItem value={TeamRule.Member.toString()}>
-                          Member
+                        <SelectItem value={TeamRule.Editor.toString()}>
+                          Editor
                         </SelectItem>
                         <SelectItem value={TeamRule.Leader.toString()}>
                           Leader
@@ -290,7 +297,7 @@ const TeamInvites = () => {
                   <div className="flex justify-end">
                     <Button
                       onClick={handleCreateInvite}
-                      disabled={isSubmitting || !selectedUserId}
+                      disabled={isSubmitting || !selectedUserEmail}
                       className="flex gap-2 items-center"
                     >
                       {createMutation.isPending ? (

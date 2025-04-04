@@ -17,6 +17,23 @@ export interface User {
   country?: string;
 }
 
+export interface UserData {
+  id: number;
+  name: string;
+  email: string;
+  cpf: string;
+  cellphone: string;
+  motherName: string;
+  fatherName: string;
+  motherCellphone: string;
+  fatherCellphone: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
 export interface UserCreateRequest {
   username: string;
   password: string;

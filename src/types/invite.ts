@@ -14,7 +14,7 @@ export interface Invite {
 
 export interface InviteCreateRequest {
   teamId: number;
-  userId: number;
+  userEmail: string;
   teamRule: number;
 }
 
@@ -34,8 +34,7 @@ export interface SingleInviteResponse {
 }
 
 export enum TeamRule {
-  Viewer = 0,
-  Member = 1,
-  Leader = 2,
-  Admin = 3
+  Viewer = 1,
+  Editor = 2,
+  Leader = 3,
 }

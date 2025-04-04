@@ -27,7 +27,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export function AppSidebar() {
-  const { selectedTeam, logout, clearTeamSelection, userTeamRule } = useAuth();
+  const { selectedTeam, logout, clearTeamSelection, user} = useAuth();
   const { data: permissions } = useRenderPermissions(selectedTeam);
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,12 +38,12 @@ export function AppSidebar() {
   };
 
   const handleChangeTeam = () => {
+    console.log(user);
     clearTeamSelection();
     navigate('/team-selection');
   };
 
   const handleSettingsAdmin = () => {
-    console.log(permissions);
     navigate('/admin');
   };
 

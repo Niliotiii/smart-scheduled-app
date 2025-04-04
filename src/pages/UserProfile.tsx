@@ -2,7 +2,6 @@ import { AppSidebar } from '@/components/AppSidebar';
 import { AppTopBar } from '@/components/AppTopBar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
@@ -19,6 +18,7 @@ const UserProfile = () => {
   const [activeTab, setActiveTab] = React.useState('profile');
 
   const getInitials = (name: string) => {
+    console.log(user);
     return name
       .split(' ')
       .map((n) => n[0])
@@ -33,53 +33,51 @@ const UserProfile = () => {
         <div className="flex flex-1 flex-col">
           <AppTopBar />
           <main className="flex-1 p-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Meu Perfil</CardTitle>
-                <CardDescription>Visualize e gerencie o seu perfil</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Tabs
-                  value={activeTab}
-                  onValueChange={setActiveTab}
-                  className="w-full"
-                >
-                  <TabsList className="mb-6">
-                    <TabsTrigger value="profile">Perfil</TabsTrigger>
-                    <TabsTrigger value="invites">Meus Convites</TabsTrigger>
-                  </TabsList>
+            <CardHeader>
+              <CardTitle>Meu Perfil {user.id}</CardTitle>
+              <CardDescription>
+                Visualize e gerencie o seu perfil
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <TabsList className="mb-6">
+                  <TabsTrigger value="profile">Perfil</TabsTrigger>
+                  <TabsTrigger value="invites">Meus Convites</TabsTrigger>
+                </TabsList>
 
-                  <TabsContent value="profile" className="w-full">
-                    <div className="flex flex-col gap-6 p-4">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-16 w-16">
-                          <AvatarFallback>
-                            {user?.name ? getInitials(user.name) : 'U'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h2 className="text-xl font-semibold">
-                            {user?.name}
-                          </h2>
-                          <p className="text-muted-foreground">{user?.email}</p>
-                        </div>
-                      </div>
-
-                      <div className="grid gap-4">
-                        <div>
-                          <h3 className="text-lg font-medium">User ID</h3>
-                          <p>{user?.id}</p>
-                        </div>
+                <TabsContent value="profile" className="w-full">
+                  <div className="flex flex-col gap-6 p-4">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-16 w-16">
+                        <AvatarFallback>
+                          {user?.name ? getInitials(user.name) : 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h2 className="text-xl font-semibold">{user?.name}</h2>
+                        <p className="text-muted-foreground">{user?.email}</p>
                       </div>
                     </div>
-                  </TabsContent>
 
-                  <TabsContent value="invites" className="w-full">
-                    <UserInvites isEmbedded={true} />
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
+                    <div className="grid gap-4">
+                      <div>
+                        <h3 className="text-lg font-medium">User ID</h3>
+                        <p>{user?.id}</p>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="invites" className="w-full">
+                  <UserInvites isEmbedded={true} />
+                </TabsContent>
+              </Tabs>
+            </CardContent>
           </main>
         </div>
       </div>
