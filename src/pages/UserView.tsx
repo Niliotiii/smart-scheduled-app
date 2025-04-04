@@ -53,17 +53,8 @@ const UserView = () => {
     enabled: !!userId,
   });
 
-  // Query to fetch user permissions
-  const { data: permissionsResponse, isLoading: isLoadingPermissions } =
-    useQuery({
-      queryKey: ['user-permissions', userId],
-      queryFn: () => fetchUserPermissions(userId),
-      enabled: !!userId,
-    });
-
   const teams = teamsResponse?.data.$values || [];
-  const permissions = permissionsResponse?.data.$values || [];
-  const isLoading = isLoadingUser || isLoadingTeams || isLoadingPermissions;
+  const isLoading = isLoadingUser || isLoadingTeams;
 
   if (isLoading) {
     return (

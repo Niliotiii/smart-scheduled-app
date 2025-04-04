@@ -15,7 +15,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { fetchTeams } from '@/services/teamService';
 import { useQuery } from '@tanstack/react-query';
-import { ClipboardList, Edit, Plus, Trash, Users } from 'lucide-react';
+import { ClipboardList, Edit, Eye, Plus, Trash, Users } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -53,6 +53,10 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
   };
 
   const handleView = (id: number) => {
+    navigate(`/teams/${id}`);
+  };
+
+  const handleViewMembers = (id: number) => {
     navigate(`/teams/${id}/members`);
   };
 
@@ -117,9 +121,17 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
                       permission="ViewTeam"
                       variant="outline"
                       tooltip="Ver Membros"
-                      onClick={() => handleView(team.id)}
+                      onClick={() => handleViewMembers(team.id)}
                     >
                       <Users className="h-4 w-4" />
+                    </ActionButton>
+                    <ActionButton
+                      permission="ViewTeam"
+                      variant="outline"
+                      tooltip="Ver Time"
+                      onClick={() => handleView(team.id)}
+                    >
+                      <Eye className="h-4 w-4" />
                     </ActionButton>
 
                     <ActionButton

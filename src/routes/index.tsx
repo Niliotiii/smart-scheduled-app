@@ -8,6 +8,7 @@ import Invites from '@/pages/Invites';
 import Login from '@/pages/Login';
 import Schedules from '@/pages/Schedules';
 import Teams from '@/pages/Teams';
+import TeamView from '@/pages/TeamView';
 import Users from '@/pages/Users';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -71,6 +72,14 @@ export const router = createBrowserRouter([
       {
         path: '/unauthorized',
         element: <UnauthorizedPage />,
+      },
+      {
+        path: '/teams/:id',
+        element: (
+          <PermissionGuard permission="ViewTeam">
+            <TeamView />
+          </PermissionGuard>
+        ),
       },
     ],
   },

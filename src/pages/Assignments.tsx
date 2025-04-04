@@ -111,7 +111,7 @@ const Assignments = ({ isEmbedded = false }) => {
                   <div className="flex justify-end space-x-2">
                     <ActionButton
                       permission="ViewAssignments"
-                      variant="ghost"
+                      variant="outline"
                       tooltip="Visualizar"
                       onClick={() => handleView(assignment.id)}
                     >

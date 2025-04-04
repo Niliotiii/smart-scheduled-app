@@ -111,7 +111,7 @@ const SchedulesList = () => {
               <div className="flex justify-end space-x-2">
                 <ActionButton
                   permission="ViewSchedules"
-                  variant="ghost"
+                  variant="outline"
                   tooltip="Visualizar"
                   onClick={() => handleView(schedule.id)}
                 >
