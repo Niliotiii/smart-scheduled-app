@@ -41,15 +41,7 @@ const Schedules = ({ isEmbedded = false }) => {
         <AppSidebar />
         <div className="flex flex-1 flex-col">
           <AppTopBar />
-          <main className="flex-1 p-6">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold">Escalas</h1>
-                <p className="text-muted-foreground">Gerencie suas escalas</p>
-              </div>
-            </div>
-            {content}
-          </main>
+          <main className="flex-1 p-6">{content}</main>
         </div>
       </div>
     </SidebarProvider>

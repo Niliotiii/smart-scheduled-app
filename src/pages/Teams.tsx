@@ -1,14 +1,9 @@
 import { ActionButton } from '@/components/ActionButton';
 import { AppSidebar } from '@/components/AppSidebar';
 import { AppTopBar } from '@/components/AppTopBar';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -17,11 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { fetchTeams } from '@/services/teamService';
 import { useQuery } from '@tanstack/react-query';
-import { Edit, Loader2, Plus, Trash, Users } from 'lucide-react';
+import { ClipboardList, Edit, Plus, Trash, Users } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -32,7 +26,11 @@ interface TeamsProps {
 const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
   const navigate = useNavigate();
 
-  const { data: teams = [], isLoading } = useQuery({
+  const {
+    data: teams,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['teams'],
     queryFn: fetchTeams,
     meta: {
@@ -54,7 +52,7 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
     navigate(`/teams/${id}/edit`);
   };
 
-  const handleViewMembers = (id: number) => {
+  const handleView = (id: number) => {
     navigate(`/teams/${id}/members`);
   };
 
@@ -76,20 +74,36 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-        </div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+          </CardContent>
+        </Card>
       ) : teams.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          Nenhum time encontrado.
-        </div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <ClipboardList className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-2 text-lg font-medium">
+                Nenhum time encontrado
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                Não há times para serem mostrados para você
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Descrição</TableHead>
-              <TableHead>Ações</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -97,13 +111,13 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
               <TableRow key={team.id}>
                 <TableCell className="font-medium">{team.name}</TableCell>
                 <TableCell>{team.description}</TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
+                <TableCell className="text-right">
+                  <div className="flex justify-end space-x-2">
                     <ActionButton
                       permission="ViewTeam"
                       variant="outline"
                       tooltip="Ver Membros"
-                      onClick={() => handleViewMembers(team.id)}
+                      onClick={() => handleView(team.id)}
                     >
                       <Users className="h-4 w-4" />
                     </ActionButton>
@@ -139,21 +153,43 @@ const Teams: React.FC<TeamsProps> = ({ isEmbedded = false }) => {
     return content;
   }
 
+  if (error) {
+    return (
+      <SidebarProvider defaultOpen={true}>
+        <div className="flex min-h-screen w-full">
+          <AppSidebar />
+          <div className="flex flex-1 flex-col">
+            <AppTopBar />
+            <main className="flex-1 p-6">
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold">Funções</h1>
+                  <p className="text-muted-foreground">
+                    Gerencie os Seus Times
+                  </p>
+                </div>
+              </div>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="text-center text-red-500">
+                    <p>Erro ao Carregar Times</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </main>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
           <AppTopBar />
-          <main className="flex-1 p-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Times</CardTitle>
-                <CardDescription>Gerencie Seus Times</CardDescription>
-              </CardHeader>
-              <CardContent>{content}</CardContent>
-            </Card>
-          </main>
+          <main className="flex-1 p-6">{content}</main>
         </div>
       </div>
     </SidebarProvider>

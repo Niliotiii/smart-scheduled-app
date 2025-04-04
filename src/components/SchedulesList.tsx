@@ -61,7 +61,7 @@ const SchedulesList = () => {
       <Card>
         <CardContent className="p-4">
           <div className="text-center text-red-500">
-            <p>Error loading schedules</p>
+            <p>Erro ao carregar escalas</p>
           </div>
         </CardContent>
       </Card>
@@ -78,8 +78,7 @@ const SchedulesList = () => {
               Nenhuma escala encontrada
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              Você ainda não tem escalas criadas. Crie uma nova escala para
-              começar.
+              Não há escalas criadas para o seu time
             </p>
           </div>
         </CardContent>

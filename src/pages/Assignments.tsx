@@ -1,7 +1,6 @@
 import { ActionButton } from '@/components/ActionButton';
 import { AppSidebar } from '@/components/AppSidebar';
 import { AppTopBar } from '@/components/AppTopBar';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,12 +18,6 @@ import { useQuery } from '@tanstack/react-query';
 import { ClipboardList, Eye, Pencil, Plus, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-interface Assignment {
-  id: string | number;
-  title: string;
-  description: string;
-}
-
 const Assignments = ({ isEmbedded = false }) => {
   const { selectedTeam } = useAuth();
   const navigate = useNavigate();
@@ -40,7 +33,7 @@ const Assignments = ({ isEmbedded = false }) => {
   });
 
   if (!selectedTeam) {
-    return <div>Porfavor Selecione Um Time.</div>;
+    return <div>Selecione Um Time.</div>;
   }
 
   const handleCreate = () => {
@@ -59,7 +52,6 @@ const Assignments = ({ isEmbedded = false }) => {
     // Add delete logic here
     console.log(`Delete assignment with id: ${id}`);
     // You can use a confirmation dialog before proceeding with the deletion
-    
   };
 
   const content = (
@@ -91,19 +83,11 @@ const Assignments = ({ isEmbedded = false }) => {
             <div className="text-center">
               <ClipboardList className="mx-auto h-12 w-12 text-gray-400" />
               <h3 className="mt-2 text-lg font-medium">
-                Função não encontrada
+                Nenhuma função encontrada
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                Não há funções disponíveis para o seu time
+                Não há funções criadas para o seu time
               </p>
-              <ActionButton
-                permission="CreateAssignments"
-                tooltip="Nova Função"
-                onClick={handleCreate}
-                className="mt-4"
-              >
-                <Plus className="h-4 w-4" />
-              </ActionButton>
             </div>
           </CardContent>
         </Card>
@@ -174,9 +158,6 @@ const Assignments = ({ isEmbedded = false }) => {
                     Gerencie as Funções do Seu Time
                   </p>
                 </div>
-                <Button onClick={handleCreate}>
-                  <Plus className="mr-2 h-4 w-4" /> Criar Função
-                </Button>
               </div>
               <Card>
                 <CardContent className="p-4">
